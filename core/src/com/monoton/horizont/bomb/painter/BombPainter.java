@@ -19,16 +19,20 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 
 	private World world;
 	private Box2DDebugRenderer renderer;
-	private float width, height;
+	private  float width, height, borderWidth, radius, circleDistance;
 
-	private final float borderWidth = 3;
+	private static final float SCREEN_RATIO = 10f;
+
 
 
 	
 	@Override
 	public void create () {
-		width = Gdx.graphics.getWidth()/5;
-		height = Gdx.graphics.getHeight()/5;
+		width = Gdx.graphics.getWidth()/SCREEN_RATIO;
+		height = Gdx.graphics.getHeight()/SCREEN_RATIO;
+		borderWidth = width/100;
+		radius = width/50;
+		circleDistance = radius * 3;
 
 		camera = new OrthographicCamera(width, height);
 		camera.position.set(width*0.5f, height * 0.5f,0);
@@ -85,7 +89,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 
 	private void createCircles() {
 
-		for(int i=10; i<width;i+=10){
+		for(int i=(int)circleDistance; i<width;i+=circleDistance){
 			createCircleBody(i, height/2);
 		}
 
@@ -94,7 +98,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
     private float  DEGTORAD = 0.0174532925199432957f;
 	private void explosion(float x, float y) {
 		int numRays = 100;
-		float blastPower = 1000000;
+		float blastPower = 10000000;
 
 		final Array<Body> explosionsParticles = new Array<Body>();
 		for (int i = 0; i < numRays; i++) {
@@ -102,31 +106,31 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 
 			Vector2 rayDir = new Vector2 (MathUtils.sin(angle), MathUtils.cos(angle));
 
-			BodyDef bd = new BodyDef();
-			bd.type = BodyDef.BodyType.DynamicBody;
-			bd.fixedRotation = true; // rotation not necessary
-			bd.bullet = true; // prevent tunneling at high speed
-			bd.linearDamping = 10; // drag due to moving through air
-			bd.gravityScale = 0; // ignore gravity
-//			bd.position.set(width/2, height/2); // start at blast center
-			bd.position.set(x, y);
+			BodyDef bodyDef = new BodyDef();
+			bodyDef.type = BodyDef.BodyType.DynamicBody;
+			bodyDef.fixedRotation = true; // rotation not necessary
+			bodyDef.bullet = true; // prevent tunneling at high speed
+			bodyDef.linearDamping = 10; // drag due to moving through air
+			bodyDef.gravityScale = 0; // ignore gravity
 
-			bd.linearVelocity.set(new Vector2(blastPower*rayDir.x, blastPower * rayDir.y));
-			Body body = world.createBody(bd);
+			bodyDef.position.set(x, y);
+
+			bodyDef.linearVelocity.set(new Vector2(blastPower*rayDir.x, blastPower * rayDir.y));
+			Body body = world.createBody(bodyDef);
 
 
 			CircleShape circleShape = new CircleShape();
-//			circleShape.m_radius = 0.05; // very small
-			circleShape.setRadius(0.5f);
 
-			FixtureDef fd = new FixtureDef();
-			fd.shape =circleShape;
-			fd.density = 60 / (float) numRays; // very high - shared across all particles
-			fd.friction = 0; // friction not necessary
-			fd.restitution = 0.99f; // high restitution to reflect off obstacles
-			fd.filter.groupIndex = -1; // particles should not collide with each other
-//			body -> CreateFixture( & fd);
-			body.createFixture(fd);
+			circleShape.setRadius(radius/10);
+
+			FixtureDef fixtureDef = new FixtureDef();
+			fixtureDef.shape =circleShape;
+			fixtureDef.density = 60 / (float) numRays; // very high - shared across all particles
+			fixtureDef.friction = 0; // friction not necessary
+			fixtureDef.restitution = 0.99f; // high restitution to reflect off obstacles
+			fixtureDef.filter.groupIndex = -1; // particles should not collide with each other
+
+			body.createFixture(fixtureDef);
 
 			explosionsParticles.add(body);
 		}
@@ -152,7 +156,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 		Body result = world.createBody(circleDef);
 
 		CircleShape circleShape = new CircleShape();
-		circleShape.setRadius(3f);
+		circleShape.setRadius(radius);
 
 		FixtureDef circleFixture = new FixtureDef();
 		circleFixture.shape = circleShape;
