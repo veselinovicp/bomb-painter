@@ -5,8 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
@@ -18,7 +16,7 @@ public class BombPainter extends ApplicationAdapter {
 	private Box2DDebugRenderer renderer;
 	private float width, height;
 
-	private Body circleBody;
+
 	
 	@Override
 	public void create () {
@@ -33,22 +31,7 @@ public class BombPainter extends ApplicationAdapter {
 		renderer = new Box2DDebugRenderer();
 		logger = new FPSLogger();
 
-		BodyDef circleDef = new BodyDef();
-		circleDef.type = BodyDef.BodyType.DynamicBody;
-		circleDef.position.set(width/2, height/2);
-
-		circleBody = world.createBody(circleDef);
-
-		CircleShape circleShape = new CircleShape();
-		circleShape.setRadius(3f);
-
-		FixtureDef circleFixture = new FixtureDef();
-		circleFixture.shape = circleShape;
-		circleFixture.density = 0.4f;
-		circleFixture.friction = 0.2f;
-		circleFixture.restitution = 0.8f;
-
-		circleBody.createFixture(circleFixture);
+		createCircles();
 
 		BodyDef groundBodyDef = new BodyDef();
 		groundBodyDef.position.set(0,3);
@@ -62,6 +45,34 @@ public class BombPainter extends ApplicationAdapter {
 
 
 
+
+	}
+
+	private void createCircles() {
+
+		for(int i=10; i<width;i+=10){
+			createCircleBody(i, i);
+		}
+
+	}
+
+	private void createCircleBody(float x, float y) {
+		BodyDef circleDef = new BodyDef();
+		circleDef.type = BodyDef.BodyType.DynamicBody;
+		circleDef.position.set(x, y);
+
+		Body result = world.createBody(circleDef);
+
+		CircleShape circleShape = new CircleShape();
+		circleShape.setRadius(3f);
+
+		FixtureDef circleFixture = new FixtureDef();
+		circleFixture.shape = circleShape;
+		circleFixture.density = 0.4f;
+		circleFixture.friction = 0.2f;
+		circleFixture.restitution = 0.8f;
+
+		result.createFixture(circleFixture);
 
 	}
 
