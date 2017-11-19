@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 
 public class BombPainter extends ApplicationAdapter implements InputProcessor{
@@ -61,9 +62,9 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 	}
 
     private float  DEGTORAD = 0.0174532925199432957f;
-	private void explosion() {
-		int numRays = 20;
-		float blastPower = 1000;
+	private void explosion(float x, float y) {
+		int numRays = 100;
+		float blastPower = 100000;
 		for (int i = 0; i < numRays; i++) {
 			float angle = (i / (float) numRays) * 360 * DEGTORAD;
 
@@ -75,15 +76,16 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 			bd.bullet = true; // prevent tunneling at high speed
 			bd.linearDamping = 10; // drag due to moving through air
 			bd.gravityScale = 0; // ignore gravity
-			bd.position.set(width/2, height/2); // start at blast center
-//			bd.linearVelocity = blastPower * rayDir;
+//			bd.position.set(width/2, height/2); // start at blast center
+			bd.position.set(x, y);
+
 			bd.linearVelocity.set(new Vector2(blastPower*rayDir.x, blastPower * rayDir.y));
 			Body body = world.createBody(bd);
 
 
 			CircleShape circleShape = new CircleShape();
 //			circleShape.m_radius = 0.05; // very small
-			circleShape.setRadius(0.05f);
+			circleShape.setRadius(0.25f);
 
 			FixtureDef fd = new FixtureDef();
 			fd.shape =circleShape;
@@ -153,8 +155,10 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-//		System.out.println("x: ");
-		explosion();
+
+		Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+		camera.unproject(touchPos);
+		explosion(touchPos.x, touchPos.y);
 		return true;
 
 	}
