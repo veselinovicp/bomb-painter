@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 
 public class BombPainter extends ApplicationAdapter implements InputProcessor{
 	private OrthographicCamera camera;
@@ -93,6 +95,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 	private void explosion(float x, float y) {
 		int numRays = 100;
 		float blastPower = 1000000;
+
+		final Array<Body> explosionsParticles = new Array<Body>();
 		for (int i = 0; i < numRays; i++) {
 			float angle = (i / (float) numRays) * 360 * DEGTORAD;
 
@@ -123,7 +127,20 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 			fd.filter.groupIndex = -1; // particles should not collide with each other
 //			body -> CreateFixture( & fd);
 			body.createFixture(fd);
+
+			explosionsParticles.add(body);
 		}
+
+		Timer.schedule(new Timer.Task() {
+
+			@Override
+			public void run() {
+				for(Body particle : explosionsParticles) {
+					world.destroyBody(particle);
+				}
+			}
+
+		}, 0.3f);
 	}
 
 
