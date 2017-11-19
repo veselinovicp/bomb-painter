@@ -121,7 +121,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 
 			CircleShape circleShape = new CircleShape();
 
-			circleShape.setRadius(radius/10);
+			circleShape.setRadius(radius/5);
 
 			FixtureDef fixtureDef = new FixtureDef();
 			fixtureDef.shape =circleShape;
