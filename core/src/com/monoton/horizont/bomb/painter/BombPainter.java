@@ -153,6 +153,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+//		System.out.println("x: ");
 		explosion();
 		return true;
 
