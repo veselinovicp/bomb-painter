@@ -19,6 +19,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 	private Box2DDebugRenderer renderer;
 	private float width, height;
 
+	private final float borderWidth = 3;
+
 
 	
 	@Override
@@ -36,15 +38,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 
 		createCircles();
 
-		BodyDef groundBodyDef = new BodyDef();
-		groundBodyDef.position.set(0,3);
-
-		Body groundBody = world.createBody(groundBodyDef);
-
-		PolygonShape groundBox = new PolygonShape();
-		groundBox.setAsBox(camera.viewportWidth*2,3);
-
-		groundBody.createFixture(groundBox,0);
+		createBorders();
 
 		Gdx.input.setInputProcessor(this);
 
@@ -53,10 +47,44 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 
 	}
 
+	private void createBorders() {
+		/**
+		 * floor
+		 */
+		createBorder(0,borderWidth,camera.viewportWidth*2,borderWidth);
+
+		/**
+		 * left border
+		 */
+		createBorder(borderWidth,borderWidth,borderWidth,camera.viewportHeight*2);
+
+		/**
+		 * right border
+		 */
+		createBorder(camera.viewportWidth-borderWidth,borderWidth,borderWidth,camera.viewportHeight*2);
+
+		/**
+		 * ceiling
+		 */
+		createBorder(borderWidth,camera.viewportHeight-borderWidth,camera.viewportWidth*2,borderWidth);
+	}
+
+	private void createBorder(float x, float y, float width, float height) {
+		BodyDef groundBodyDef = new BodyDef();
+		groundBodyDef.position.set(x,y);
+
+		Body groundBody = world.createBody(groundBodyDef);
+
+		PolygonShape groundBox = new PolygonShape();
+		groundBox.setAsBox(width, height);
+
+		groundBody.createFixture(groundBox,0);
+	}
+
 	private void createCircles() {
 
 		for(int i=10; i<width;i+=10){
-			createCircleBody(i, i);
+			createCircleBody(i, height/2);
 		}
 
 	}
@@ -64,7 +92,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
     private float  DEGTORAD = 0.0174532925199432957f;
 	private void explosion(float x, float y) {
 		int numRays = 100;
-		float blastPower = 100000;
+		float blastPower = 1000000;
 		for (int i = 0; i < numRays; i++) {
 			float angle = (i / (float) numRays) * 360 * DEGTORAD;
 
@@ -85,7 +113,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 
 			CircleShape circleShape = new CircleShape();
 //			circleShape.m_radius = 0.05; // very small
-			circleShape.setRadius(0.25f);
+			circleShape.setRadius(0.5f);
 
 			FixtureDef fd = new FixtureDef();
 			fd.shape =circleShape;
