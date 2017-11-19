@@ -110,7 +110,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 			bodyDef.type = BodyDef.BodyType.DynamicBody;
 			bodyDef.fixedRotation = true; // rotation not necessary
 			bodyDef.bullet = true; // prevent tunneling at high speed
-			bodyDef.linearDamping = 10; // drag due to moving through air
+			bodyDef.linearDamping = 5; // drag due to moving through air 10
 			bodyDef.gravityScale = 0; // ignore gravity
 
 			bodyDef.position.set(x, y);
