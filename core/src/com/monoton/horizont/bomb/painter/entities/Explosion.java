@@ -28,7 +28,7 @@ public class Explosion extends Actor {
         this.callback=callback;
         this.explosionImages=explosionImages;
         // Initialize the Animation with the frame interval and array of frames
-        animation = new Animation<TextureRegion>(0.015f, explosionImages);
+        animation = new Animation<TextureRegion>(0.010f, explosionImages);
 
         this.positionX=positionX;
         this.positionY=positionY;
