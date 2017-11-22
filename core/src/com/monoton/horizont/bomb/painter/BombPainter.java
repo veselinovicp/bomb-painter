@@ -6,6 +6,8 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -30,6 +32,10 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private StretchViewport stretchViewport;
 
 	private Stage particles;
+
+	private Texture explosionTexture;
+
+	private TextureRegion[] explosionImages;
 
 
 
@@ -57,11 +63,36 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		createBorders();
 
+
+		createExplosionImages();
+
 		Gdx.input.setInputProcessor(this);
 
 
 
 
+	}
+
+	private void createExplosionImages() {
+		int FRAME_COLS=8,FRAME_ROWS = 8;
+		explosionTexture = new Texture(Gdx.files.internal("explosion.png"));
+
+		// Use the split utility method to create a 2D array of TextureRegions. This is
+		// possible because this sprite sheet contains frames of equal size and they are
+		// all aligned.
+		TextureRegion[][] tmp = TextureRegion.split(explosionTexture,
+				explosionTexture.getWidth() / FRAME_COLS,
+				explosionTexture.getHeight() / FRAME_ROWS);
+
+		// Place the regions into a 1D array in the correct order, starting from the top
+		// left, going across first. The Animation constructor requires a 1D array.
+		explosionImages = new TextureRegion[FRAME_COLS * FRAME_ROWS];
+		int index = 0;
+		for (int i = 0; i < FRAME_ROWS; i++) {
+			for (int j = 0; j < FRAME_COLS; j++) {
+				explosionImages[index++] = tmp[i][j];
+			}
+		}
 	}
 
 	private void createBorders() {
@@ -107,7 +138,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
     private float  DEGTORAD = 0.0174532925199432957f;
-	private void explosion(float x, float y) {
+	private void explosion(float x, float y, float screenX, float screenY) {
 		int numRays = 100;
 		float blastPower = 10000000;
 
@@ -146,7 +177,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 			explosionsParticles.add(body);
 		}
 
-		particles.addActor(new Explosion(explosionsParticles, this, x, y, width, height));
+		particles.addActor(new Explosion(explosionsParticles, this, explosionImages, screenX, screenY, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 
 		Timer.schedule(new Timer.Task() {
 
@@ -190,7 +221,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 
 		/**
-		 *
+
 		 * 1. draw particles
 		 */
 		particles.act();
@@ -206,6 +237,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	@Override
 	public void dispose () {
 		world.dispose();
+		explosionTexture.dispose();
 
 	}
 
@@ -231,7 +263,15 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 		camera.unproject(touchPos);
-		explosion(touchPos.x, touchPos.y);
+
+
+
+		Vector3 touchPosStage = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+		stretchViewport.unproject(touchPosStage);
+
+
+
+		explosion(touchPos.x, touchPos.y, touchPosStage.x, touchPosStage.y);
 		return true;
 
 	}
@@ -266,5 +306,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 			world.destroyBody(particle);
 		}*/
 		explosion.remove();
+
+
 	}
 }
