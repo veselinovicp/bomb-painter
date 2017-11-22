@@ -10,18 +10,26 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.monoton.horizont.bomb.painter.communication.ExplosionCallback;
+import com.monoton.horizont.bomb.painter.entities.Explosion;
 
-public class BombPainter extends ApplicationAdapter implements InputProcessor{
+public class BombPainter extends ApplicationAdapter implements InputProcessor, ExplosionCallback {
 	private OrthographicCamera camera;
 	private FPSLogger logger;
+
+	private static final float SCREEN_RATIO = 10f;
 
 	private World world;
 	private Box2DDebugRenderer renderer;
 	private  float width, height, borderWidth, radius, circleDistance;
 
-	private static final float SCREEN_RATIO = 10f;
+	private StretchViewport stretchViewport;
+
+	private Stage particles;
 
 
 
@@ -37,6 +45,9 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 		camera = new OrthographicCamera(width, height);
 		camera.position.set(width*0.5f, height * 0.5f,0);
 		camera.update();
+
+		stretchViewport = new StretchViewport(width, height);
+		particles = new Stage(stretchViewport);
 
 		world = new World(new Vector2(0, -9.8f), false);
 		renderer = new Box2DDebugRenderer();
@@ -135,6 +146,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 			explosionsParticles.add(body);
 		}
 
+		particles.addActor(new Explosion(explosionsParticles, this, x, y, width, height));
+
 		Timer.schedule(new Timer.Task() {
 
 			@Override
@@ -145,6 +158,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 			}
 
 		}, 0.3f);
+
+
 	}
 
 
@@ -172,6 +187,15 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 	public void render () {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+
+		/**
+		 *
+		 * 1. draw particles
+		 */
+		particles.act();
+		particles.draw();
+
 
 		renderer.render(world, camera.combined);
 		world.step(1/60f, 6, 2);
@@ -234,5 +258,13 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor{
 	public boolean scrolled(int amount) {
 		return true;
 
+	}
+
+	@Override
+	public void explosionEnded(Explosion explosion) {
+		/*for(Body particle : explosion.getExplosionsParticles()) {
+			world.destroyBody(particle);
+		}*/
+		explosion.remove();
 	}
 }
