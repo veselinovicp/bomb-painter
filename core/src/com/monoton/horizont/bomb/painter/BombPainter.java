@@ -179,16 +179,6 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		particles.addActor(new Explosion(explosionsParticles, this, explosionImages, screenX, screenY, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 
-		Timer.schedule(new Timer.Task() {
-
-			@Override
-			public void run() {
-				for(Body particle : explosionsParticles) {
-					world.destroyBody(particle);
-				}
-			}
-
-		}, 0.3f);
 
 
 	}
@@ -302,9 +292,9 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 	@Override
 	public void explosionEnded(Explosion explosion) {
-		/*for(Body particle : explosion.getExplosionsParticles()) {
+		for(Body particle : explosion.getExplosionsParticles()) {
 			world.destroyBody(particle);
-		}*/
+		}
 		explosion.remove();
 
 
