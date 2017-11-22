@@ -14,10 +14,10 @@ import com.monoton.horizont.bomb.painter.communication.ExplosionCallback;
 public class Explosion extends Actor {
 
     private Array<Body> explosionsParticles;
-    private  float screenWidth, screenHeight;
+
     private float positionX,  positionY;
     private ExplosionCallback callback;
-    private TextureRegion[] explosionImages;
+
     private float stateTime = 0f;
     private Animation animation;
     private float eplosionWidth=32;
@@ -29,14 +29,13 @@ public class Explosion extends Actor {
     public Explosion(Array<Body> explosionsParticles, ExplosionCallback callback, TextureRegion[] explosionImages, float positionX, float positionY, float screenWidth, float screenHeight) {
         this.explosionsParticles = explosionsParticles;
         this.callback=callback;
-        this.explosionImages=explosionImages;
+
         // Initialize the Animation with the frame interval and array of frames
         animation = new Animation<TextureRegion>(0.010f, explosionImages);
 
         this.positionX=positionX;
         this.positionY=positionY;
-        this.screenHeight=screenHeight;
-        this.screenWidth=screenWidth;
+
         this.setBounds(0, 0, screenWidth, screenHeight);
     }
 
