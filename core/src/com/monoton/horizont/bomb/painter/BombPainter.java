@@ -138,7 +138,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
     private float  DEGTORAD = 0.0174532925199432957f;
-	private void explosion(float x, float y, float screenX, float screenY) {
+	private void explosion(float x, float y) {
 		int numRays = 100;
 		float blastPower = 10000000;
 
@@ -177,7 +177,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 			explosionsParticles.add(body);
 		}
 
-		particles.addActor(new Explosion(explosionsParticles, this, explosionImages, screenX, screenY, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
+		particles.addActor(new Explosion(explosionsParticles, this, explosionImages, x, y, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 
 
 
@@ -254,14 +254,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 		camera.unproject(touchPos);
 
-
-
-		Vector3 touchPosStage = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-		stretchViewport.unproject(touchPosStage);
-
-
-
-		explosion(touchPos.x, touchPos.y, touchPosStage.x, touchPosStage.y);
+		explosion(touchPos.x, touchPos.y);
 		return true;
 
 	}

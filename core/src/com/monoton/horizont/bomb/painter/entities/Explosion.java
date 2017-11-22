@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
@@ -21,6 +22,8 @@ public class Explosion extends Actor {
     private Animation animation;
     private float eplosionWidth=32;
     private float explostionHeight=32;
+    private float eplosionParticleWidth=eplosionWidth/5f;
+    private float explostionParticleHeight=explostionHeight/5f;
 
 
     public Explosion(Array<Body> explosionsParticles, ExplosionCallback callback, TextureRegion[] explosionImages, float positionX, float positionY, float screenWidth, float screenHeight) {
@@ -46,10 +49,21 @@ public class Explosion extends Actor {
 
 
         if(!animation.isAnimationFinished(stateTime)){
+
+
+
             // Get current frame of animation for the current stateTime
             TextureRegion currentFrame = (TextureRegion)animation.getKeyFrame(stateTime, false);
 
-            batch.draw(currentFrame, positionX-eplosionWidth/2f, positionY-explostionHeight/2f,eplosionWidth,explostionHeight); // Draw current frame at (50, 50)
+
+
+            for(Body explosionParticle : explosionsParticles) {
+                Vector2 explosionParticlePosition = explosionParticle.getPosition();
+                batch.draw(currentFrame, explosionParticlePosition.x - eplosionParticleWidth / 2f, explosionParticlePosition.y - explostionParticleHeight / 2f, eplosionParticleWidth, explostionParticleHeight);
+            }
+
+
+            batch.draw(currentFrame, positionX-eplosionWidth/2f, positionY-explostionHeight/2f,eplosionWidth,explostionHeight);
         }else {
             callback.explosionEnded(this);
         }
