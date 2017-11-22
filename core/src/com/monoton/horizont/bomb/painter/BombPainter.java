@@ -140,7 +140,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		for(int i=(int)circleDistance; i<width;i+=circleDistance){
 			Body circleBody = createCircleBody(i, height / 2);
-			particles.addActor(new Ball(circleBody,ballTexture,radius*2,stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
+			particles.addActor(new Ball(circleBody,new TextureRegion(ballTexture),radius*2,stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 		}
 
 	}
