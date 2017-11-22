@@ -40,6 +40,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 	private Texture ballTexture;
 
+	private static final int NUM_OF_BALL_ROWS = 4;
+
 
 
 	
@@ -136,11 +138,14 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		ballTexture = new Texture(Gdx.files.internal("color_circle.png"));
 
+		float verticalStep = width / (float) (NUM_OF_BALL_ROWS+3);
 
 
-		for(int i=(int)circleDistance; i<width;i+=circleDistance){
-			Body circleBody = createCircleBody(i, height / 2);
-			particles.addActor(new Ball(circleBody,new TextureRegion(ballTexture),radius*2,stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
+		for(int j=0; j<NUM_OF_BALL_ROWS+3; j++) {
+			for (int i = (int) circleDistance; i < width; i += circleDistance) {
+				Body circleBody = createCircleBody(i, (j+1)*verticalStep);
+				particles.addActor(new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
+			}
 		}
 
 	}
@@ -160,7 +165,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 			bodyDef.type = BodyDef.BodyType.DynamicBody;
 			bodyDef.fixedRotation = true; // rotation not necessary
 			bodyDef.bullet = true; // prevent tunneling at high speed
-			bodyDef.linearDamping = 5; // drag due to moving through air 10
+			bodyDef.linearDamping = 3; // drag due to moving through air 10
 			bodyDef.gravityScale = 0; // ignore gravity
 
 			bodyDef.position.set(x, y);
