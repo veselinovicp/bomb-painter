@@ -22,8 +22,8 @@ public class Explosion extends Actor {
     private Animation animation;
     private float eplosionWidth=32;
     private float explostionHeight=32;
-    private float eplosionParticleWidth=eplosionWidth/5f;
-    private float explostionParticleHeight=explostionHeight/5f;
+    private float eplosionParticleWidth=eplosionWidth/10f;
+    private float explostionParticleHeight=explostionHeight/10f;
 
 
     public Explosion(Array<Body> explosionsParticles, ExplosionCallback callback, TextureRegion[] explosionImages, float positionX, float positionY, float screenWidth, float screenHeight) {
