@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.monoton.horizont.bomb.painter.communication.ExplosionCallback;
+import com.monoton.horizont.bomb.painter.entities.Ball;
 import com.monoton.horizont.bomb.painter.entities.Explosion;
 
 public class BombPainter extends ApplicationAdapter implements InputProcessor, ExplosionCallback {
@@ -36,6 +37,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private Texture explosionTexture;
 
 	private TextureRegion[] explosionImages;
+
+	private Texture ballTexture;
 
 
 
@@ -131,8 +134,13 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 	private void createCircles() {
 
+		ballTexture = new Texture(Gdx.files.internal("color_circle.png"));
+
+
+
 		for(int i=(int)circleDistance; i<width;i+=circleDistance){
-			createCircleBody(i, height/2);
+			Body circleBody = createCircleBody(i, height / 2);
+			particles.addActor(new Ball(circleBody,ballTexture,radius*2,stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 		}
 
 	}
@@ -184,7 +192,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
 
-	private void createCircleBody(float x, float y) {
+	private Body createCircleBody(float x, float y) {
 		BodyDef circleDef = new BodyDef();
 		circleDef.type = BodyDef.BodyType.DynamicBody;
 		circleDef.position.set(x, y);
@@ -201,6 +209,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		circleFixture.restitution = 0.8f;
 
 		result.createFixture(circleFixture);
+		return result;
 
 	}
 
@@ -228,6 +237,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	public void dispose () {
 		world.dispose();
 		explosionTexture.dispose();
+		ballTexture.dispose();
 
 	}
 
