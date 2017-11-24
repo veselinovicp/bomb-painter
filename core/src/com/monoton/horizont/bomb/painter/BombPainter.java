@@ -93,7 +93,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		world.setContactListener(new ContactListener() {
 			@Override
 			public void beginContact(Contact contact) {
-
+/*
 				if(contact.getFixtureA().getBody() == basketBody) {// && contact.getFixtureB().getBody().getUserData().equals(BALL)
 
 					if(world.isLocked()) {
@@ -106,7 +106,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 					if(world.isLocked()) {
 						hits.add(contact.getFixtureA().getBody());
 					}
-				}
+				}*/
 
 
 			}

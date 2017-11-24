@@ -54,10 +54,11 @@ public class Explosion extends Actor {
             // Get current frame of animation for the current stateTime
             TextureRegion currentFrame = (TextureRegion)animation.getKeyFrame(stateTime, false);
 
-
             for(Body explosionParticle : explosionsParticles) {
-                Vector2 explosionParticlePosition = explosionParticle.getPosition();
-                batch.draw(currentFrame, explosionParticlePosition.x - eplosionParticleWidth / 2f, explosionParticlePosition.y - explostionParticleHeight / 2f, eplosionParticleWidth, explostionParticleHeight);
+//                if(explosionParticle.isActive()) {
+                    Vector2 explosionParticlePosition = explosionParticle.getPosition();
+                    batch.draw(currentFrame, explosionParticlePosition.x - eplosionParticleWidth / 2f, explosionParticlePosition.y - explostionParticleHeight / 2f, eplosionParticleWidth, explostionParticleHeight);
+//                }
             }
 
 
