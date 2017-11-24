@@ -14,11 +14,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.monoton.horizont.bomb.painter.communication.ExplosionCallback;
 import com.monoton.horizont.bomb.painter.entities.Ball;
 import com.monoton.horizont.bomb.painter.entities.Explosion;
+
+import java.util.Iterator;
 
 public class BombPainter extends ApplicationAdapter implements InputProcessor, ExplosionCallback {
 	private OrthographicCamera camera;
@@ -42,6 +43,12 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 	private static final int NUM_OF_BALL_ROWS = 4;
 
+	private Body basketBody;
+
+	private Array<Body> hits = new Array<Body>();
+
+	private static final String BALL="ball";
+
 
 
 	
@@ -64,16 +71,65 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		renderer = new Box2DDebugRenderer();
 		logger = new FPSLogger();
 
-		createCircles();
+		createBalls();
+
+		createBasket();
 
 		createBorders();
 
 
 		createExplosionImages();
 
+		createBasketListener();
+
 		Gdx.input.setInputProcessor(this);
 
 
+
+
+	}
+
+	private void createBasketListener() {
+		world.setContactListener(new ContactListener() {
+			@Override
+			public void beginContact(Contact contact) {
+
+				if(contact.getFixtureA().getBody() == basketBody) {// && contact.getFixtureB().getBody().getUserData().equals(BALL)
+
+					if(world.isLocked()) {
+						hits.add(contact.getFixtureB().getBody());
+					}
+				}
+
+				if(contact.getFixtureB().getBody() == basketBody) {// && contact.getFixtureA().getBody().getUserData().equals(BALL)
+
+					if(world.isLocked()) {
+						hits.add(contact.getFixtureA().getBody());
+					}
+				}
+
+
+			}
+
+			@Override
+			public void endContact(Contact contact) {
+
+			}
+
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold) {
+
+			}
+
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse) {
+
+			}
+		});
+	}
+
+	private void createBasket(){
+		basketBody = createCircleBody(0.75f*width,0.8f*height, BodyDef.BodyType.StaticBody, "basket");
 
 
 	}
@@ -132,9 +188,11 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		groundBox.setAsBox(width, height);
 
 		groundBody.createFixture(groundBox,0);
+
+		groundBox.dispose();
 	}
 
-	private void createCircles() {
+	private void createBalls() {
 
 		ballTexture = new Texture(Gdx.files.internal("color_circle.png"));
 
@@ -143,7 +201,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		for(int j=0; j<NUM_OF_BALL_ROWS+3; j++) {
 			for (int i = (int) circleDistance; i < width; i += circleDistance) {
-				Body circleBody = createCircleBody(i, (j+1)*verticalStep);
+				Body circleBody = createCircleBody(i, (j+1)*verticalStep, BodyDef.BodyType.DynamicBody, BALL);
 				particles.addActor(new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 			}
 		}
@@ -172,6 +230,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 			bodyDef.linearVelocity.set(new Vector2(blastPower*rayDir.x, blastPower * rayDir.y));
 			Body body = world.createBody(bodyDef);
+			body.setUserData("explosion");
 
 
 			CircleShape circleShape = new CircleShape();
@@ -187,6 +246,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 			body.createFixture(fixtureDef);
 
+			circleShape.dispose();
+
 			explosionsParticles.add(body);
 		}
 
@@ -197,12 +258,13 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
 
-	private Body createCircleBody(float x, float y) {
+	private Body createCircleBody(float x, float y, BodyDef.BodyType bodyType, String label) {
 		BodyDef circleDef = new BodyDef();
-		circleDef.type = BodyDef.BodyType.DynamicBody;
+		circleDef.type = bodyType;
 		circleDef.position.set(x, y);
 
 		Body result = world.createBody(circleDef);
+		result.setUserData(label);
 
 		CircleShape circleShape = new CircleShape();
 		circleShape.setRadius(radius);
@@ -214,6 +276,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		circleFixture.restitution = 0.8f;
 
 		result.createFixture(circleFixture);
+		circleShape.dispose();
 		return result;
 
 	}
@@ -231,13 +294,36 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		particles.act();
 		particles.draw();
 
+		clearHitsFromBoard();
 
-//		renderer.render(world, camera.combined);
+
+		renderer.render(world, camera.combined);
 		world.step(1/60f, 6, 2);
 		logger.log();
 
 	}
-	
+
+	private void clearHitsFromBoard() {
+		/*for(Body hit :hits){
+			if(hit.isActive()) {
+				world.destroyBody(hit);
+			}
+		}*/
+
+		Iterator<Body> i = hits.iterator();
+		if(!world.isLocked()){
+			while(i.hasNext()){
+				Body b = i.next();
+				world.destroyBody(b);
+
+				i.remove();
+
+			}
+
+		}
+
+	}
+
 	@Override
 	public void dispose () {
 		world.dispose();
@@ -301,7 +387,9 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	@Override
 	public void explosionEnded(Explosion explosion) {
 		for(Body particle : explosion.getExplosionsParticles()) {
-			world.destroyBody(particle);
+			if(particle.isActive()) {
+				world.destroyBody(particle);
+			}
 		}
 		explosion.remove();
 

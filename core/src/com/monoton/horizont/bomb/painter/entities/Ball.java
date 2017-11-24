@@ -25,13 +25,17 @@ public class Ball extends Actor{
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        Vector2 position = ballBody.getPosition();
+        if(ballBody.isActive()) {
+            Vector2 position = ballBody.getPosition();
 
 
-        float angle = MathUtils.radiansToDegrees * ballBody.getAngle();
+            float angle = MathUtils.radiansToDegrees * ballBody.getAngle();
 
 
-        batch.draw(ballTexture, position.x-dimension/2, position.y-dimension/2,dimension/2,dimension/2, dimension, dimension,1,1,angle);
+            batch.draw(ballTexture, position.x - dimension / 2, position.y - dimension / 2, dimension / 2, dimension / 2, dimension, dimension, 1, 1, angle);
+        }else {
+            remove();
+        }
 
     }
 }
