@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.monoton.horizont.bomb.painter.communication.ExplosionCallback;
 import com.monoton.horizont.bomb.painter.entities.Ball;
@@ -45,7 +46,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 	private Body basketBody;
 
-	private Array<Body> hits = new Array<Body>();
+	private SnapshotArray<Body> hits = new SnapshotArray<Body>();
 
 	private static final String BALL="ball";
 
@@ -93,20 +94,22 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		world.setContactListener(new ContactListener() {
 			@Override
 			public void beginContact(Contact contact) {
-/*
 				if(contact.getFixtureA().getBody() == basketBody) {// && contact.getFixtureB().getBody().getUserData().equals(BALL)
 
-					if(world.isLocked()) {
-						hits.add(contact.getFixtureB().getBody());
-					}
+//					if(world.isLocked()) {
+						addHit(contact.getFixtureB().getBody());
+
+//					}
 				}
 
 				if(contact.getFixtureB().getBody() == basketBody) {// && contact.getFixtureA().getBody().getUserData().equals(BALL)
 
-					if(world.isLocked()) {
-						hits.add(contact.getFixtureA().getBody());
-					}
-				}*/
+//					if(world.isLocked()) {
+
+
+						addHit(contact.getFixtureA().getBody());
+//					}
+				}
 
 
 			}
@@ -128,8 +131,16 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		});
 	}
 
+	private void addHit(Body body) {
+		hits.begin();
+
+
+		hits.add(body);
+		hits.end();
+	}
+
 	private void createBasket(){
-		basketBody = createCircleBody(0.75f*width,0.8f*height, BodyDef.BodyType.StaticBody, "basket");
+		basketBody = createCircleBody(0.75f*width,0.67f*height, BodyDef.BodyType.StaticBody, "basket");
 
 
 	}
@@ -310,15 +321,24 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 			}
 		}*/
 
-		Iterator<Body> i = hits.iterator();
+//		Iterator<Body> i = hits.iterator();
 		if(!world.isLocked()){
-			while(i.hasNext()){
+			Object[] bodies = hits.begin();
+		/*	while(i.hasNext()){
 				Body b = i.next();
 				world.destroyBody(b);
 
 				i.remove();
 
+			}*/
+			for (int i = 0, n = hits.size; i < n; i++) {
+				Body destroyedBall = (Body)bodies[i];
+				world.destroyBody(destroyedBall);
+				// ...
 			}
+			hits.clear();
+
+			hits.end();
 
 		}
 
