@@ -8,7 +8,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import java.util.UUID;
+
 public class Ball extends Actor{
+
+    private String id;
 
     private Body ballBody;
     private TextureRegion ballTexture;
@@ -20,6 +24,8 @@ public class Ball extends Actor{
         this.dimension=dimension;
 
         this.setBounds(0, 0, screenWidth, screenHeight);
+
+        id = UUID.randomUUID().toString();
     }
 
 
@@ -37,5 +43,9 @@ public class Ball extends Actor{
             remove();
         }
 
+    }
+
+    public String getId() {
+        return id;
     }
 }

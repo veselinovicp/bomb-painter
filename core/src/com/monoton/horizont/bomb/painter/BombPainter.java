@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.SnapshotArray;
@@ -19,8 +20,9 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.monoton.horizont.bomb.painter.communication.ExplosionCallback;
 import com.monoton.horizont.bomb.painter.entities.Ball;
 import com.monoton.horizont.bomb.painter.entities.Explosion;
+import com.monoton.horizont.bomb.painter.logic.BodyDescription;
 
-import java.util.Iterator;
+import java.util.UUID;
 
 public class BombPainter extends ApplicationAdapter implements InputProcessor, ExplosionCallback {
 	private OrthographicCamera camera;
@@ -45,6 +47,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private static final int NUM_OF_BALL_ROWS = 4;
 
 	private Body basketBody;
+
+	private Array<Ball> balls = new Array<Ball>();
 
 	private SnapshotArray<Body> hits = new SnapshotArray<Body>();
 
@@ -94,21 +98,18 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		world.setContactListener(new ContactListener() {
 			@Override
 			public void beginContact(Contact contact) {
-				if(contact.getFixtureA().getBody() == basketBody) {// && contact.getFixtureB().getBody().getUserData().equals(BALL)
+				if(contact.getFixtureA().getBody() == basketBody ) {// && contact.getFixtureB().getBody().getUserData().equals(BALL)
 
-//					if(world.isLocked()) {
 						addHit(contact.getFixtureB().getBody());
 
-//					}
 				}
 
 				if(contact.getFixtureB().getBody() == basketBody) {// && contact.getFixtureA().getBody().getUserData().equals(BALL)
 
-//					if(world.isLocked()) {
 
 
 						addHit(contact.getFixtureA().getBody());
-//					}
+
 				}
 
 
@@ -132,15 +133,26 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
 	private void addHit(Body body) {
-		hits.begin();
+
+		BodyDescription userData = (BodyDescription)body.getUserData();
+		String label = userData.getLabel();
+		System.out.println("label hit: "+label);
+		if(userData!=null && label.equals(BALL)) {
+			System.out.println("hit");
+			hits.begin();
+			hits.add(body);
+			hits.end();
+		}
 
 
-		hits.add(body);
-		hits.end();
+
+
+
 	}
 
 	private void createBasket(){
-		basketBody = createCircleBody(0.75f*width,0.67f*height, BodyDef.BodyType.StaticBody, "basket");
+		basketBody = createCircleBody(0.75f*width,0.67f*height, BodyDef.BodyType.StaticBody, 3*radius);
+		basketBody.setUserData(new BodyDescription(UUID.randomUUID().toString(),"basket"));
 
 
 	}
@@ -205,15 +217,22 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 	private void createBalls() {
 
-		ballTexture = new Texture(Gdx.files.internal("color_circle.png"));
+		ballTexture = new Texture(Gdx.files.internal("basketball_ball_2.png"));
 
 		float verticalStep = width / (float) (NUM_OF_BALL_ROWS+3);
 
 
 		for(int j=0; j<NUM_OF_BALL_ROWS+3; j++) {
-			for (int i = (int) circleDistance; i < width; i += circleDistance) {
-				Body circleBody = createCircleBody(i, (j+1)*verticalStep, BodyDef.BodyType.DynamicBody, BALL);
-				particles.addActor(new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
+			for (int i = (int) circleDistance; i < width/2f; i += circleDistance) {
+				Body circleBody = createCircleBody(i, (j+1)*verticalStep, BodyDef.BodyType.DynamicBody, radius);
+				Ball ball = new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight());
+
+				balls.add(ball);
+				particles.addActor(ball);
+
+//				ball.setUserObject();
+
+				circleBody.setUserData(new BodyDescription(ball.getId(), BALL));
 			}
 		}
 
@@ -241,7 +260,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 			bodyDef.linearVelocity.set(new Vector2(blastPower*rayDir.x, blastPower * rayDir.y));
 			Body body = world.createBody(bodyDef);
-			body.setUserData("explosion");
+			body.setUserData(new BodyDescription(UUID.randomUUID().toString(),"explosion"));
 
 
 			CircleShape circleShape = new CircleShape();
@@ -269,16 +288,16 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
 
-	private Body createCircleBody(float x, float y, BodyDef.BodyType bodyType, String label) {
+	private Body createCircleBody(float x, float y, BodyDef.BodyType bodyType, float _radius) {
 		BodyDef circleDef = new BodyDef();
 		circleDef.type = bodyType;
 		circleDef.position.set(x, y);
 
 		Body result = world.createBody(circleDef);
-		result.setUserData(label);
+
 
 		CircleShape circleShape = new CircleShape();
-		circleShape.setRadius(radius);
+		circleShape.setRadius(_radius);
 
 		FixtureDef circleFixture = new FixtureDef();
 		circleFixture.shape = circleShape;
@@ -288,6 +307,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		result.createFixture(circleFixture);
 		circleShape.dispose();
+
+
 		return result;
 
 	}
@@ -315,26 +336,16 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
 	private void clearHitsFromBoard() {
-		/*for(Body hit :hits){
-			if(hit.isActive()) {
-				world.destroyBody(hit);
-			}
-		}*/
 
-//		Iterator<Body> i = hits.iterator();
 		if(!world.isLocked()){
 			Object[] bodies = hits.begin();
-		/*	while(i.hasNext()){
-				Body b = i.next();
-				world.destroyBody(b);
 
-				i.remove();
-
-			}*/
 			for (int i = 0, n = hits.size; i < n; i++) {
 				Body destroyedBall = (Body)bodies[i];
+				BodyDescription userData = (BodyDescription)destroyedBall.getUserData();
+				removeBall(userData.getId());
 				world.destroyBody(destroyedBall);
-				// ...
+
 			}
 			hits.clear();
 
@@ -342,6 +353,23 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		}
 
+	}
+
+	private void removeBall(String id){
+
+		for(Actor actor : particles.getActors())
+		{
+
+
+			if(actor instanceof Ball){
+				Ball ball = (Ball) actor;
+				if(ball.getId().equals(id)){
+					actor.remove();
+				}
+			}
+
+
+		}
 	}
 
 	@Override
