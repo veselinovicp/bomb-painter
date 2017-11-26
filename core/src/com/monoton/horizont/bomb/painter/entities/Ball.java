@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.UUID;
 
@@ -17,8 +18,11 @@ public class Ball extends Actor{
     private Body ballBody;
     private TextureRegion ballTexture;
     private float dimension;
+    private float  basketCenterX, basketCenterY;
+    private float screenWidth, screenHeight;
+    private Stage particles;
 
-    public Ball(Body ballBody,TextureRegion ballTexture,float dimension, float screenWidth, float screenHeight) {
+    public Ball(Body ballBody,TextureRegion ballTexture,float dimension, float screenWidth, float screenHeight, float  basketCenterX, float basketCenterY, Stage particles) {
         this.ballBody = ballBody;
         this.ballTexture = ballTexture;
         this.dimension=dimension;
@@ -26,6 +30,11 @@ public class Ball extends Actor{
         this.setBounds(0, 0, screenWidth, screenHeight);
 
         id = UUID.randomUUID().toString();
+        this.basketCenterX=basketCenterX;
+        this.basketCenterY=basketCenterY;
+        this.screenWidth=screenWidth;
+        this.screenHeight=screenHeight;
+        this.particles =particles;
     }
 
 
@@ -44,6 +53,16 @@ public class Ball extends Actor{
         }
 
     }
+
+    @Override
+    public boolean remove(){
+        Vector2 position = ballBody.getPosition();
+        BallInBasket ballInBasket = new BallInBasket(ballTexture, position.x, position.y, basketCenterX, basketCenterY, ballBody.getLinearVelocity().angleRad(), screenWidth, screenHeight, dimension);//ballBody.getAngle()
+        particles.addActor(ballInBasket);
+        return super.remove();
+    }
+
+
 
     public String getId() {
         return id;

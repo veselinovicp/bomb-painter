@@ -56,6 +56,9 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private static final String BALL="ball";
 	private TextureRegion basketTexture;
 
+	private float basketCenterX;
+	private float basketCenterY;
+
 
 	@Override
 	public void create () {
@@ -154,14 +157,14 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
 	private void createBasket(){
-		float x = 0.75f * width;
-		float y = 0.67f * height;
+		basketCenterX = 0.75f * width;
+		basketCenterY = 0.67f * height;
 		int size = 3;
-		basketBody = createCircleBody(x, y, BodyDef.BodyType.StaticBody, size *radius);
+		basketBody = createCircleBody(basketCenterX, basketCenterY, BodyDef.BodyType.StaticBody, size *radius);
 		basketBody.setUserData(new BodyDescription(UUID.randomUUID().toString(),"basket"));
 
 		basketTexture = new TextureRegion(new Texture(Gdx.files.internal("color_circle.png")));//"basket.png"
-		particles.addActor(new Basket(basketTexture,2*(size+2)*radius,x,y,stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
+		particles.addActor(new Basket(basketTexture,2*(size+2)*radius,basketCenterX,basketCenterY,stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 
 
 	}
@@ -234,7 +237,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		for(int j=0; j<NUM_OF_BALL_ROWS+3; j++) {
 			for (int i = (int) circleDistance; i < width/2f; i += circleDistance) {
 				Body circleBody = createCircleBody(i, (j+1)*verticalStep, BodyDef.BodyType.DynamicBody, radius);
-				Ball ball = new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight());
+				Ball ball = new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), basketCenterX, basketCenterY, particles);
 
 				balls.add(ball);
 				particles.addActor(ball);
