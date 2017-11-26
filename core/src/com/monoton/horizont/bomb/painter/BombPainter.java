@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.monoton.horizont.bomb.painter.communication.ExplosionCallback;
 import com.monoton.horizont.bomb.painter.entities.Ball;
+import com.monoton.horizont.bomb.painter.entities.Basket;
 import com.monoton.horizont.bomb.painter.entities.Explosion;
 import com.monoton.horizont.bomb.painter.logic.BodyDescription;
 
@@ -53,10 +54,9 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private SnapshotArray<Body> hits = new SnapshotArray<Body>();
 
 	private static final String BALL="ball";
+	private TextureRegion basketTexture;
 
 
-
-	
 	@Override
 	public void create () {
 		width = Gdx.graphics.getWidth()/SCREEN_RATIO;
@@ -76,9 +76,12 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		renderer = new Box2DDebugRenderer();
 		logger = new FPSLogger();
 
-		createBalls();
 
 		createBasket();
+
+		createBalls();
+
+
 
 		createBorders();
 
@@ -151,8 +154,14 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
 	private void createBasket(){
-		basketBody = createCircleBody(0.75f*width,0.67f*height, BodyDef.BodyType.StaticBody, 3*radius);
+		float x = 0.75f * width;
+		float y = 0.67f * height;
+		int size = 3;
+		basketBody = createCircleBody(x, y, BodyDef.BodyType.StaticBody, size *radius);
 		basketBody.setUserData(new BodyDescription(UUID.randomUUID().toString(),"basket"));
+
+		basketTexture = new TextureRegion(new Texture(Gdx.files.internal("color_circle.png")));//"basket.png"
+		particles.addActor(new Basket(basketTexture,2*(size+2)*radius,x,y,stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 
 
 	}
@@ -377,6 +386,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		world.dispose();
 		explosionTexture.dispose();
 		ballTexture.dispose();
+		basketTexture.getTexture().dispose();
 
 	}
 
