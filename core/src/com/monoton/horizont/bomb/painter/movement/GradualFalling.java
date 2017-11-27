@@ -1,4 +1,4 @@
-package com.monoton.horizont.bomb.painter.math;
+package com.monoton.horizont.bomb.painter.movement;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Array;
 /**
  * r=a*fi(power b)
  */
-public class GradualFalling {
+public class GradualFalling implements BallInBasketMovement{
 
     private float pointX, pointY;
 
