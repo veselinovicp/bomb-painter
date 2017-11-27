@@ -341,7 +341,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		clearHitsFromBoard();
 
 
-		renderer.render(world, camera.combined);
+//		renderer.render(world, camera.combined);
 		world.step(1/60f, 6, 2);
 		logger.log();
 

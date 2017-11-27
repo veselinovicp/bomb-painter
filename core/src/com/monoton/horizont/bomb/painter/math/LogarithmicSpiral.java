@@ -5,14 +5,13 @@ import com.badlogic.gdx.math.Vector2;
 
 
 /**
- * r=a*fi(power b)
+ * r=a*E(power (b*fi))
+ * http://mathworld.wolfram.com/LogarithmicSpiral.html
  */
 public class LogarithmicSpiral {
 
     private float pointX, pointY;
 
-    private float T;
-    private float fi;
     private float a,b;
     private float basketCenterX, basketCenterY;
     private float angle;
@@ -21,9 +20,6 @@ public class LogarithmicSpiral {
         this.pointX = basketCenterX-pointX;
         this.pointY = basketCenterY-pointY;
 
-        this.T = MathUtils.sin(angle)/MathUtils.cos(angle);
-
-        this.fi=(float) Math.atan(pointY/pointX);
         this.basketCenterX = basketCenterX;
         this.basketCenterY = basketCenterY;
         this.angle = angle;

@@ -55,10 +55,10 @@ public class Explosion extends Actor {
             TextureRegion currentFrame = (TextureRegion)animation.getKeyFrame(stateTime, false);
 
             for(Body explosionParticle : explosionsParticles) {
-//                if(explosionParticle.isActive()) {
+
                     Vector2 explosionParticlePosition = explosionParticle.getPosition();
                     batch.draw(currentFrame, explosionParticlePosition.x - eplosionParticleWidth / 2f, explosionParticlePosition.y - explostionParticleHeight / 2f, eplosionParticleWidth, explostionParticleHeight);
-//                }
+
             }
 
 
