@@ -11,6 +11,9 @@ public class BallInBasketMovementFactory {
         if(type.equals(Constants.IN_BASKET_MOVEMENT_GRADUAL)){
             return new GradualFalling(pointX,pointY,basketCenterX, basketCenterY,angle, linearVelocityAngleBeforeColision);
         }
+        if(type.equals(Constants.IN_BASKET_MOVEMENT_TANGENT_SPIRAL)){
+            return new TangentSpiral(pointX,pointY,basketCenterX, basketCenterY,angle, linearVelocityAngleBeforeColision);
+        }
         throw new RuntimeException("No BallInBasketMovement by type: "+type);
 
     }

@@ -24,7 +24,7 @@ public class BallInBasket extends Actor{
     public BallInBasket(TextureRegion ballTexture, float pointX, float pointY, float basketCenterX, float basketCenterY, float angle, float screenWidth, float screenHeight, float dimension,float linearVelocityAngleBeforeColision) {
         this.ballTexture = ballTexture;
         this.setBounds(0, 0, screenWidth, screenHeight);
-        this.inBasketMovement = BallInBasketMovementFactory.getMovement(Constants.IN_BASKET_MOVEMENT_GRADUAL,pointX,pointY,basketCenterX, basketCenterY,angle, linearVelocityAngleBeforeColision);
+        this.inBasketMovement = BallInBasketMovementFactory.getMovement(Constants.IN_BASKET_MOVEMENT_TANGENT_SPIRAL,pointX,pointY,basketCenterX, basketCenterY,angle, linearVelocityAngleBeforeColision);
         this.angle = MathUtils.radiansToDegrees * angle;
         this.dimension = dimension;
 

@@ -9,7 +9,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width=1500;
 		config.height=1000;
-		config.foregroundFPS = 60;
+		config.foregroundFPS = 20;
 		new LwjglApplication(new BombPainter(), config);
 	}
 }
