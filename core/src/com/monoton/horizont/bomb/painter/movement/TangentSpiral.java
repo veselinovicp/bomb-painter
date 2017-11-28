@@ -27,7 +27,7 @@ public class TangentSpiral implements BallInBasketMovement {
         this.linearVelocityAngleBeforeColision=linearVelocityAngleBeforeColision;
         this.angle=linearVelocityAngleBeforeColision+ MathUtils.PI;
 
-        this.T = (float)MathUtils.sin(linearVelocityAngleBeforeColision)/MathUtils.cos(linearVelocityAngleBeforeColision);
+        this.T = (float)MathUtils.sin(MathUtils.PI-linearVelocityAngleBeforeColision)/MathUtils.cos(MathUtils.PI-linearVelocityAngleBeforeColision);
         if(pointX>=0 && pointY>=0){
             this.fi = MathUtils.atan2(pointY, pointX);
         }
