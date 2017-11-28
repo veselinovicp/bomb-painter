@@ -16,6 +16,7 @@ public class TangentSpiral implements BallInBasketMovement {
     private float linearVelocityAngleBeforeColision;
     private float T;
     private float fi;
+    private boolean bNegative = false;
 
     public TangentSpiral(float _pointX, float _pointY, float basketCenterX, float basketCenterY, float angle, float linearVelocityAngleBeforeColision) {
         this.pointX = _pointX-basketCenterX;
@@ -31,6 +32,9 @@ public class TangentSpiral implements BallInBasketMovement {
 
 
         this.fi = MathUtils.atan2(pointY, pointX);
+        if(fi<0){
+            fi=fi+2*MathUtils.PI;
+        }
 
 
         calculateParameters();
@@ -44,9 +48,18 @@ public class TangentSpiral implements BallInBasketMovement {
 
         b = (fi*(MathUtils.cos(fi)+T*MathUtils.sin(fi)))/(T*MathUtils.cos(fi)-MathUtils.sin(fi));
 
+        if(b<0){
+            System.out.println("b negative");
+            bNegative=true;
+            b = (fi*(MathUtils.cos(fi)+T*MathUtils.sin(fi)))/(-T*MathUtils.cos(fi)+MathUtils.sin(fi));
+            a = distance/(float)(Math.pow(fi,-b));
+        }else{
+            a = distance/(float)(Math.pow(fi,b));
+        }
 
 
-        a = distance/(float)(Math.pow(fi,b));
+
+
 
 
         System.out.println("a: "+a+", b: "+b);
@@ -59,8 +72,13 @@ public class TangentSpiral implements BallInBasketMovement {
 
     public Vector2 getCartesianPoint(float percent){
         float an = fi-percent*fi;
+        float r = 0;
+        if(bNegative){
+            r = a * (float) Math.pow(an, -b);
+        }else {
+            r = a * (float) Math.pow(an, b);
+        }
 
-        float r = a * (float) Math.pow(an, b);
         float x = r * MathUtils.cos(an)+basketCenterX;//-pointX
         float y = r * MathUtils.sin(an)+basketCenterY;//-pointY
         return new Vector2(x,y);
