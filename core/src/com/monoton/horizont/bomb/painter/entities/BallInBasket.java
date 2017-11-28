@@ -21,10 +21,10 @@ public class BallInBasket extends Actor{
     private float angle;
     private float dimension;
 
-    public BallInBasket(TextureRegion ballTexture, float pointX, float pointY, float basketCenterX, float basketCenterY, float angle, float screenWidth, float screenHeight, float dimension) {
+    public BallInBasket(TextureRegion ballTexture, float pointX, float pointY, float basketCenterX, float basketCenterY, float angle, float screenWidth, float screenHeight, float dimension,float linearVelocityAngleBeforeColision) {
         this.ballTexture = ballTexture;
         this.setBounds(0, 0, screenWidth, screenHeight);
-        this.inBasketMovement = BallInBasketMovementFactory.getMovement(Constants.IN_BASKET_MOVEMENT_LOGARITHMIC_SPIRAL,pointX,pointY,basketCenterX, basketCenterY,angle);
+        this.inBasketMovement = BallInBasketMovementFactory.getMovement(Constants.IN_BASKET_MOVEMENT_GRADUAL,pointX,pointY,basketCenterX, basketCenterY,angle, linearVelocityAngleBeforeColision);
         this.angle = MathUtils.radiansToDegrees * angle;
         this.dimension = dimension;
 

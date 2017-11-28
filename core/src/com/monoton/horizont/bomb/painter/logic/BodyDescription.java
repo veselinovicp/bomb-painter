@@ -4,6 +4,8 @@ public class BodyDescription {
 
     private String id;
     private String label;
+    private float linearVelocityAngleBeforeColision;
+
 
     public BodyDescription(String id, String label) {
         this.id = id;
@@ -16,5 +18,13 @@ public class BodyDescription {
 
     public String getLabel() {
         return label;
+    }
+
+    public float getLinearVelocityAngleBeforeColision() {
+        return linearVelocityAngleBeforeColision;
+    }
+
+    public void setLinearVelocityAngleBeforeColision(float linearVelocityAngleBeforeColision) {
+        this.linearVelocityAngleBeforeColision = linearVelocityAngleBeforeColision;
     }
 }

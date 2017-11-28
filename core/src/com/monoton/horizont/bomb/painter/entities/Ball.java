@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.monoton.horizont.bomb.painter.logic.BodyDescription;
 
 import java.util.UUID;
 
@@ -57,7 +58,19 @@ public class Ball extends Actor{
     @Override
     public boolean remove(){
         Vector2 position = ballBody.getPosition();
-        BallInBasket ballInBasket = new BallInBasket(ballTexture, position.x, position.y, basketCenterX, basketCenterY, ballBody.getLinearVelocity().angleRad(), screenWidth, screenHeight, dimension);//ballBody.getAngle()
+        float angle = ballBody.getLinearVelocity().angleRad();
+        float deg = 0;
+        if(angle>0){
+            deg = (angle) * MathUtils.radiansToDegrees;
+        }else{
+            deg = (angle + 2 * MathUtils.PI) * MathUtils.radiansToDegrees;
+        }
+
+        System.out.println("angle: "+ deg);
+        BodyDescription userData = (BodyDescription) ballBody.getUserData();
+        float linearVelocityAngleBeforeColision = userData.getLinearVelocityAngleBeforeColision();
+        System.out.println("angle2: "+ linearVelocityAngleBeforeColision);
+        BallInBasket ballInBasket = new BallInBasket(ballTexture, position.x, position.y, basketCenterX, basketCenterY, angle, screenWidth, screenHeight, dimension, linearVelocityAngleBeforeColision);//ballBody.getAngle()
         particles.addActor(ballInBasket);
         return super.remove();
     }

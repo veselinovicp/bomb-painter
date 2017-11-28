@@ -148,6 +148,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 			hits.begin();
 			hits.add(body);
 			hits.end();
+			userData.setLinearVelocityAngleBeforeColision(body.getLinearVelocity().angleRad());
 		}
 
 

@@ -15,14 +15,17 @@ public class LogarithmicSpiral implements BallInBasketMovement{
     private float a,b;
     private float basketCenterX, basketCenterY;
     private float angle;
+    private float linearVelocityAngleBeforeColision;
 
-    public LogarithmicSpiral(float pointX, float pointY, float basketCenterX, float basketCenterY, float angle) {
+    public LogarithmicSpiral(float pointX, float pointY, float basketCenterX, float basketCenterY, float angle, float linearVelocityAngleBeforeColision) {
         this.pointX = basketCenterX-pointX;
         this.pointY = basketCenterY-pointY;
 
         this.basketCenterX = basketCenterX;
         this.basketCenterY = basketCenterY;
         this.angle = angle;
+        this.linearVelocityAngleBeforeColision=linearVelocityAngleBeforeColision;
+        this.angle=linearVelocityAngleBeforeColision+MathUtils.PI;
 
         calculateParameters();
 
