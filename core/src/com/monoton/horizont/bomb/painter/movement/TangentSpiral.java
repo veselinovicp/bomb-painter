@@ -17,9 +17,9 @@ public class TangentSpiral implements BallInBasketMovement {
     private float T;
     private float fi;
 
-    public TangentSpiral(float pointX, float pointY, float basketCenterX, float basketCenterY, float angle, float linearVelocityAngleBeforeColision) {
-        this.pointX = basketCenterX-pointX;
-        this.pointY = basketCenterY-pointY;
+    public TangentSpiral(float _pointX, float _pointY, float basketCenterX, float basketCenterY, float angle, float linearVelocityAngleBeforeColision) {
+        this.pointX = basketCenterX-_pointX;
+        this.pointY = basketCenterY-_pointY;
 
         this.basketCenterX = basketCenterX;
         this.basketCenterY = basketCenterY;
@@ -27,8 +27,20 @@ public class TangentSpiral implements BallInBasketMovement {
         this.linearVelocityAngleBeforeColision=linearVelocityAngleBeforeColision;
         this.angle=linearVelocityAngleBeforeColision+ MathUtils.PI;
 
-        this.T = (float)Math.tan(MathUtils.PI-linearVelocityAngleBeforeColision);
-        this.fi = MathUtils.PI-MathUtils.atan2(pointY, pointX);
+        this.T = (float)MathUtils.sin(linearVelocityAngleBeforeColision)/MathUtils.cos(linearVelocityAngleBeforeColision);
+        if(pointX>=0 && pointY>=0){
+            this.fi = MathUtils.atan2(pointY, pointX);
+        }
+        if(pointX>=0 && pointY<=0){
+            this.fi = 2*MathUtils.PI+MathUtils.atan2(pointY, pointX);
+        }
+        if(pointX<=0 && pointY<=0){
+            this.fi = MathUtils.PI+MathUtils.atan2(pointY, pointX);
+        }
+        if(pointX<=0 && pointY>=0){
+            this.fi = MathUtils.PI+MathUtils.atan2(pointY, pointX);
+        }
+
 
 
         calculateParameters();
