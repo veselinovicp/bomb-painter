@@ -142,7 +142,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		BodyDescription userData = (BodyDescription)body.getUserData();
 		String label = userData.getLabel();
-		System.out.println("label hit: "+label);
+
 		if(userData!=null && label.equals(BALL)) {
 			System.out.println("hit");
 			hits.begin();
@@ -344,7 +344,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 //		renderer.render(world, camera.combined);
 		world.step(1/60f, 6, 2);
-		logger.log();
+//		logger.log();
 
 	}
 

@@ -32,16 +32,11 @@ public class GradualFalling implements BallInBasketMovement{
         this.basketCenterY = basketCenterY;
         this.angle = angle;
         this.linearVelocityAngleBeforeColision = linearVelocityAngleBeforeColision;
-        if(linearVelocityAngleBeforeColision<0){
-            linearVelocityAngleBeforeColision+=2*MathUtils.PI;
-        }
 
         initialDistanceToCenter = calculateDistanceToCenter(new Vector2(basketCenterX-pointX, basketCenterY-pointY));
         desiredAngle = MathUtils.atan2(basketCenterY-pointY, basketCenterX-pointX);
 
-        if(desiredAngle<0){
-            desiredAngle+=2*MathUtils.PI;
-        }
+
 
 
 
@@ -59,12 +54,17 @@ public class GradualFalling implements BallInBasketMovement{
         }else {
 
             desiredAngle = MathUtils.atan2(basketCenterY-lastPoint.y, basketCenterX-lastPoint.x);
-            if(desiredAngle<0){
-                desiredAngle+=2*MathUtils.PI;
+
+
+
+            float newAngle = 0;
+            if(linearVelocityAngleBeforeColision<desiredAngle){
+                newAngle = (1-percent)*linearVelocityAngleBeforeColision + percent*desiredAngle;
+            }else {
+                newAngle = (1-percent)*linearVelocityAngleBeforeColision - percent*desiredAngle;
             }
 
 
-            float newAngle = (1-percent)*linearVelocityAngleBeforeColision + percent*desiredAngle;
 
             float x = pointX+initialDistanceToCenter*percent*MathUtils.cos(newAngle);//desiredAngle
             float y = pointY+initialDistanceToCenter*percent*MathUtils.sin(newAngle);//desiredAngle

@@ -59,17 +59,12 @@ public class Ball extends Actor{
     public boolean remove(){
         Vector2 position = ballBody.getPosition();
         float angle = ballBody.getLinearVelocity().angleRad();
-        float deg = 0;
-        if(angle>0){
-            deg = (angle) * MathUtils.radiansToDegrees;
-        }else{
-            deg = (angle + 2 * MathUtils.PI) * MathUtils.radiansToDegrees;
-        }
 
-        System.out.println("angle: "+ deg);
+
+
         BodyDescription userData = (BodyDescription) ballBody.getUserData();
         float linearVelocityAngleBeforeColision = userData.getLinearVelocityAngleBeforeColision();
-        System.out.println("angle2: "+ linearVelocityAngleBeforeColision);
+
         BallInBasket ballInBasket = new BallInBasket(ballTexture, position.x, position.y, basketCenterX, basketCenterY, angle, screenWidth, screenHeight, dimension, linearVelocityAngleBeforeColision);//ballBody.getAngle()
         particles.addActor(ballInBasket);
         return super.remove();

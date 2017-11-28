@@ -18,29 +18,19 @@ public class TangentSpiral implements BallInBasketMovement {
     private float fi;
 
     public TangentSpiral(float _pointX, float _pointY, float basketCenterX, float basketCenterY, float angle, float linearVelocityAngleBeforeColision) {
-        this.pointX = basketCenterX-_pointX;
-        this.pointY = basketCenterY-_pointY;
+        this.pointX = _pointX-basketCenterX;
+        this.pointY = _pointY-basketCenterY;
 
         this.basketCenterX = basketCenterX;
         this.basketCenterY = basketCenterY;
         this.angle = angle;
         this.linearVelocityAngleBeforeColision=linearVelocityAngleBeforeColision;
-        this.angle=linearVelocityAngleBeforeColision+ MathUtils.PI;
 
-        this.T = (float)MathUtils.sin(MathUtils.PI-linearVelocityAngleBeforeColision)/MathUtils.cos(MathUtils.PI-linearVelocityAngleBeforeColision);
-        if(pointX>=0 && pointY>=0){
-            this.fi = MathUtils.atan2(pointY, pointX);
-        }
-        if(pointX>=0 && pointY<=0){
-            this.fi = 2*MathUtils.PI+MathUtils.atan2(pointY, pointX);
-        }
-        if(pointX<=0 && pointY<=0){
-            this.fi = MathUtils.PI+MathUtils.atan2(pointY, pointX);
-        }
-        if(pointX<=0 && pointY>=0){
-            this.fi = MathUtils.PI+MathUtils.atan2(pointY, pointX);
-        }
 
+        this.T = (float)MathUtils.sin(linearVelocityAngleBeforeColision)/MathUtils.cos(linearVelocityAngleBeforeColision);
+
+
+        this.fi = MathUtils.atan2(pointY, pointX);
 
 
         calculateParameters();
@@ -60,6 +50,11 @@ public class TangentSpiral implements BallInBasketMovement {
 
 
         System.out.println("a: "+a+", b: "+b);
+        float fiDeg = fi * MathUtils.radiansToDegrees;
+        float velDeg = linearVelocityAngleBeforeColision * MathUtils.radiansToDegrees;
+
+        System.out.println("pointX: "+pointX+", pointY: "+pointY);
+        System.out.println("angle: "+fiDeg+", tangent: "+velDeg);
     }
 
     public Vector2 getCartesianPoint(float percent){
