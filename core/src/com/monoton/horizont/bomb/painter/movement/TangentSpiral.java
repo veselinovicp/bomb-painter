@@ -16,25 +16,18 @@ public class TangentSpiral implements BallInBasketMovement {
     private float linearVelocityAngleBeforeColision;
     private float T;
     private float fi;
-    private boolean bNegative = false;
+    private float deltaX, deltaY;
+
 
     public TangentSpiral(float _pointX, float _pointY, float basketCenterX, float basketCenterY, float angle, float linearVelocityAngleBeforeColision) {
-        this.pointX = _pointX-basketCenterX;
-        this.pointY = _pointY-basketCenterY;
-
         this.basketCenterX = basketCenterX;
         this.basketCenterY = basketCenterY;
         this.angle = angle;
         this.linearVelocityAngleBeforeColision=linearVelocityAngleBeforeColision;
 
+        this.pointX = _pointX-basketCenterX;
+        this.pointY = _pointY-basketCenterY;
 
-        this.T = (float)MathUtils.sin(linearVelocityAngleBeforeColision)/MathUtils.cos(linearVelocityAngleBeforeColision);
-
-
-        this.fi = MathUtils.atan2(pointY, pointX);
-        if(fi<0){
-            fi=fi+2*MathUtils.PI;
-        }
 
 
         calculateParameters();
@@ -43,19 +36,23 @@ public class TangentSpiral implements BallInBasketMovement {
 
     private void calculateParameters() {
 
+
+
+
+
+        this.T = (float)MathUtils.sin(linearVelocityAngleBeforeColision)/MathUtils.cos(linearVelocityAngleBeforeColision);
+
+
+        this.fi = MathUtils.atan2(pointY, pointX)+2*MathUtils.PI;
+
+
         float distance=(float)Math.sqrt(pointX*pointX+pointY*pointY);
 
 
         b = (fi*(MathUtils.cos(fi)+T*MathUtils.sin(fi)))/(T*MathUtils.cos(fi)-MathUtils.sin(fi));
 
-        if(b<0){
-            System.out.println("b negative");
-            bNegative=true;
-            b = (fi*(MathUtils.cos(fi)+T*MathUtils.sin(fi)))/(-T*MathUtils.cos(fi)+MathUtils.sin(fi));
-            a = distance/(float)(Math.pow(fi,-b));
-        }else{
             a = distance/(float)(Math.pow(fi,b));
-        }
+
 
 
 
@@ -71,16 +68,17 @@ public class TangentSpiral implements BallInBasketMovement {
     }
 
     public Vector2 getCartesianPoint(float percent){
-        float an = fi-percent*fi;
-        float r = 0;
-        if(bNegative){
-            r = a * (float) Math.pow(an, -b);
+        float an = 0;
+        if(b>0) {
+            an = fi - percent * fi;
         }else {
-            r = a * (float) Math.pow(an, b);
+            an = fi + percent * fi;
         }
+        float r = a * (float) Math.pow(an, b);
 
-        float x = r * MathUtils.cos(an)+basketCenterX;//-pointX
-        float y = r * MathUtils.sin(an)+basketCenterY;//-pointY
+
+        float x = r * MathUtils.cos(an)+basketCenterX+deltaX;//-pointX
+        float y = r * MathUtils.sin(an)+basketCenterY+deltaY;//-pointY
         return new Vector2(x,y);
     }
 
