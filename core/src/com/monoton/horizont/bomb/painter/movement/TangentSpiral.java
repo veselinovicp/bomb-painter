@@ -16,7 +16,8 @@ public class TangentSpiral implements BallInBasketMovement {
     private float linearVelocityAngleBeforeColision;
     private float T;
     private float fi;
-    private float deltaX, deltaY;
+    private float originalPointX, originalPointY;
+    private float k,n;
 
 
     public TangentSpiral(float _pointX, float _pointY, float basketCenterX, float basketCenterY, float angle, float linearVelocityAngleBeforeColision) {
@@ -27,6 +28,9 @@ public class TangentSpiral implements BallInBasketMovement {
 
         this.pointX = _pointX-basketCenterX;
         this.pointY = _pointY-basketCenterY;
+
+        this.originalPointX = _pointX;
+        this.originalPointY = _pointY;
 
 
 
@@ -65,9 +69,29 @@ public class TangentSpiral implements BallInBasketMovement {
 
         System.out.println("pointX: "+pointX+", pointY: "+pointY);
         System.out.println("angle: "+fiDeg+", tangent: "+velDeg);
+
+        if(isLinear()){
+            calculateLinearFunction();
+            System.out.println("linear function");
+        }
+
+
+    }
+
+    private boolean isLinear(){
+        return Float.isInfinite(a) || a==0;
+    }
+
+    private void calculateLinearFunction(){
+        this.k = pointY/pointX;
+        this.n = basketCenterY - k*basketCenterX;
     }
 
     public Vector2 getCartesianPoint(float percent){
+
+        if(isLinear()){
+            return getLinearPoint(percent);
+        }
         float an = 0;
         if(b>0) {
             an = fi - percent * fi;
@@ -77,9 +101,18 @@ public class TangentSpiral implements BallInBasketMovement {
         float r = a * (float) Math.pow(an, b);
 
 
-        float x = r * MathUtils.cos(an)+basketCenterX+deltaX;//-pointX
-        float y = r * MathUtils.sin(an)+basketCenterY+deltaY;//-pointY
+        float x = r * MathUtils.cos(an)+basketCenterX;//-pointX
+        float y = r * MathUtils.sin(an)+basketCenterY;//-pointY
         return new Vector2(x,y);
+    }
+
+
+    private Vector2 getLinearPoint(float percent){
+        float x = originalPointX - percent * pointX;
+        float y = k*x+n;
+
+        return new Vector2(x,y);
+
     }
 
 }
