@@ -1,6 +1,6 @@
 package com.monoton.horizont.bomb.painter.entities;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -22,8 +22,9 @@ public class Ball extends Actor{
     private float  basketCenterX, basketCenterY;
     private float screenWidth, screenHeight;
     private Stage particles;
+    private Sound score;
 
-    public Ball(Body ballBody,TextureRegion ballTexture,float dimension, float screenWidth, float screenHeight, float  basketCenterX, float basketCenterY, Stage particles) {
+    public Ball(Body ballBody, TextureRegion ballTexture, float dimension, float screenWidth, float screenHeight, float basketCenterX, float basketCenterY, Stage particles, Sound score) {
         this.ballBody = ballBody;
         this.ballTexture = ballTexture;
         this.dimension=dimension;
@@ -36,6 +37,7 @@ public class Ball extends Actor{
         this.screenWidth=screenWidth;
         this.screenHeight=screenHeight;
         this.particles =particles;
+        this.score = score;
     }
 
 
@@ -65,7 +67,7 @@ public class Ball extends Actor{
         BodyDescription userData = (BodyDescription) ballBody.getUserData();
         float linearVelocityAngleBeforeColision = userData.getLinearVelocityAngleBeforeColision();
 
-        BallInBasket ballInBasket = new BallInBasket(ballTexture, position.x, position.y, basketCenterX, basketCenterY, angle, screenWidth, screenHeight, dimension, linearVelocityAngleBeforeColision);//ballBody.getAngle()
+        BallInBasket ballInBasket = new BallInBasket(ballTexture, position.x, position.y, basketCenterX, basketCenterY, angle, screenWidth, screenHeight, dimension, linearVelocityAngleBeforeColision, score);//ballBody.getAngle()
         particles.addActor(ballInBasket);
         return super.remove();
     }

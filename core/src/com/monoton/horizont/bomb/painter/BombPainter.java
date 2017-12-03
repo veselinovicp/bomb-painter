@@ -61,6 +61,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private float basketCenterY;
 
 	private Sound explosion;
+	private Sound score;
+	private Sound spin;
 
 
 	@Override
@@ -82,6 +84,9 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		renderer = new Box2DDebugRenderer();
 		logger = new FPSLogger();
 
+		//
+		createSoundEffects();
+
 
 		createBasket();
 
@@ -96,8 +101,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		createBasketListener();
 
-		//
-		createSoundEffects();
+
 
 		Gdx.input.setInputProcessor(this);
 
@@ -107,7 +111,9 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
 	private void createSoundEffects() {
-		explosion = Gdx.audio.newSound(Gdx.files.internal("DeathFlash.ogg"));
+		explosion = Gdx.audio.newSound(Gdx.files.internal("DeathFlash.ogg"));//basket_ball_drop.wav
+		score = Gdx.audio.newSound(Gdx.files.internal("basket_ball_drop.wav"));//basket_ball_drop.wav
+		spin = Gdx.audio.newSound(Gdx.files.internal("spin.mp3"));
 	}
 
 	private void createBasketListener() {
@@ -157,6 +163,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		if(userData!=null && label.equals(BALL)) {
 			System.out.println("hit");
+			spin.play();
 			hits.begin();
 			hits.add(body);
 			hits.end();
@@ -250,7 +257,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		for(int j=0; j<NUM_OF_BALL_ROWS+3; j++) {
 			for (int i = (int) circleDistance; i < width/2f; i += circleDistance) {
 				Body circleBody = createCircleBody(i, (j+1)*verticalStep, BodyDef.BodyType.DynamicBody, radius);
-				Ball ball = new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), basketCenterX, basketCenterY, particles);
+				Ball ball = new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), basketCenterX, basketCenterY, particles, score);
 
 				balls.add(ball);
 				particles.addActor(ball);
@@ -405,6 +412,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		ballTexture.dispose();
 		basketTexture.getTexture().dispose();
 		explosion.dispose();
+		score.dispose();
+		spin.dispose();
 
 	}
 
