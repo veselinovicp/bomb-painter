@@ -3,6 +3,7 @@ package com.monoton.horizont.bomb.painter;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -59,6 +60,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private float basketCenterX;
 	private float basketCenterY;
 
+	private Sound explosion;
+
 
 	@Override
 	public void create () {
@@ -93,11 +96,18 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		createBasketListener();
 
+		//
+		createSoundEffects();
+
 		Gdx.input.setInputProcessor(this);
 
 
 
 
+	}
+
+	private void createSoundEffects() {
+		explosion = Gdx.audio.newSound(Gdx.files.internal("DeathFlash.ogg"));
 	}
 
 	private void createBasketListener() {
@@ -108,6 +118,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 						addHit(contact.getFixtureB().getBody());
 
+
 				}
 
 				if(contact.getFixtureB().getBody() == basketBody) {// && contact.getFixtureA().getBody().getUserData().equals(BALL)
@@ -115,6 +126,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 
 						addHit(contact.getFixtureA().getBody());
+
 
 				}
 
@@ -293,6 +305,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 			explosionsParticles.add(body);
 		}
+		explosion.play();
 
 		particles.addActor(new Explosion(explosionsParticles, this, explosionImages, x, y, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 
@@ -391,6 +404,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		explosionTexture.dispose();
 		ballTexture.dispose();
 		basketTexture.getTexture().dispose();
+		explosion.dispose();
 
 	}
 

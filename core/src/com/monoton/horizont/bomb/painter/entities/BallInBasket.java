@@ -39,10 +39,9 @@ public class BallInBasket extends Actor{
             float ratio = stateTime / animationTime;
             Vector2 cartesianPoint = inBasketMovement.getCartesianPoint(ratio);//ratio*2*MathUtils.PI
             float currentDimension = (1-ratio)*dimension;
-          /*  Color color = batch.getColor();
-            batch.setColor(1,0,0,1);*/
+
             batch.draw(ballTexture, cartesianPoint.x - currentDimension / 2, cartesianPoint.y - currentDimension / 2, currentDimension / 2, currentDimension / 2, currentDimension, currentDimension, 1, 1, this.angle);
-//            batch.setColor(color);
+
 
         }else {
             remove();
