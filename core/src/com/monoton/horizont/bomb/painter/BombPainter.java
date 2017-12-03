@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.monoton.horizont.bomb.painter.communication.ExplosionCallback;
 import com.monoton.horizont.bomb.painter.entities.Ball;
 import com.monoton.horizont.bomb.painter.entities.Basket;
+import com.monoton.horizont.bomb.painter.entities.Court;
 import com.monoton.horizont.bomb.painter.entities.Explosion;
 import com.monoton.horizont.bomb.painter.logic.BodyDescription;
 
@@ -31,7 +32,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private OrthographicCamera camera;
 	private FPSLogger logger;
 
-	private static final float SCREEN_RATIO = 10f;
+
 
 	private static final int MIN_SOUND_SPEED = 25;
 
@@ -67,11 +68,13 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private Sound basketBallSound;
 	private Sound spin;
 
+	private Texture court;
+
 
 	@Override
 	public void create () {
-		width = Gdx.graphics.getWidth()/SCREEN_RATIO;
-		height = Gdx.graphics.getHeight()/SCREEN_RATIO;
+		width = Gdx.graphics.getWidth()/Constants.SCREEN_RATIO;
+		height = Gdx.graphics.getHeight()/Constants.SCREEN_RATIO;
 		borderWidth = width/100;
 		radius = width/50;
 		circleDistance = radius * 3;
@@ -89,6 +92,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		//
 		createSoundEffects();
+
+		createCourt();
 
 
 		createBasket();
@@ -111,6 +116,12 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 
 
+
+	}
+
+	private void createCourt() {
+		court = new Texture(Gdx.files.internal("court_2.jpg"));
+		particles.addActor(new Court(court, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 
 	}
 
@@ -452,6 +463,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		explosion.dispose();
 		basketBallSound.dispose();
 		spin.dispose();
+		court.dispose();
 
 	}
 
