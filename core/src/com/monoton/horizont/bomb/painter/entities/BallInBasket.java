@@ -30,6 +30,8 @@ public class BallInBasket extends Actor{
         this.dimension = dimension;
         this.score=score;
 
+
+
     }
 
 

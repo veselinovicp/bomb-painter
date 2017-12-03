@@ -27,10 +27,13 @@ import com.monoton.horizont.bomb.painter.logic.BodyDescription;
 import java.util.UUID;
 
 public class BombPainter extends ApplicationAdapter implements InputProcessor, ExplosionCallback {
+	private static final String BORDER = "BORDER";
 	private OrthographicCamera camera;
 	private FPSLogger logger;
 
 	private static final float SCREEN_RATIO = 10f;
+
+	private static final int MIN_SOUND_SPEED = 25;
 
 	private World world;
 	private Box2DDebugRenderer renderer;
@@ -61,7 +64,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private float basketCenterY;
 
 	private Sound explosion;
-	private Sound score;
+	private Sound basketBallSound;
 	private Sound spin;
 
 
@@ -103,6 +106,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 
 
+
 		Gdx.input.setInputProcessor(this);
 
 
@@ -112,29 +116,47 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 	private void createSoundEffects() {
 		explosion = Gdx.audio.newSound(Gdx.files.internal("DeathFlash.ogg"));//basket_ball_drop.wav
-		score = Gdx.audio.newSound(Gdx.files.internal("basket_ball_drop.wav"));//basket_ball_drop.wav
-		spin = Gdx.audio.newSound(Gdx.files.internal("spin.mp3"));
+		basketBallSound = Gdx.audio.newSound(Gdx.files.internal("basket_ball_drop.wav"));//basket_ball_drop.wav
+		spin = Gdx.audio.newSound(Gdx.files.internal("spin.mp3"));//coin_spin.wav
 	}
 
 	private void createBasketListener() {
 		world.setContactListener(new ContactListener() {
 			@Override
 			public void beginContact(Contact contact) {
-				if(contact.getFixtureA().getBody() == basketBody ) {// && contact.getFixtureB().getBody().getUserData().equals(BALL)
+				Body bodyA = contact.getFixtureA().getBody();
+				BodyDescription descrptionA = (BodyDescription) bodyA.getUserData();
+				Body bodyB = contact.getFixtureB().getBody();
+				BodyDescription descrptionB = (BodyDescription) bodyB.getUserData();
+				if(bodyA == basketBody ) {
 
-						addHit(contact.getFixtureB().getBody());
+						addHit(bodyB);
+
+
+				}
+
+				if(bodyB == basketBody) {
+
+
+
+						addHit(bodyA);
 
 
 				}
 
-				if(contact.getFixtureB().getBody() == basketBody) {// && contact.getFixtureA().getBody().getUserData().equals(BALL)
-
-
-
-						addHit(contact.getFixtureA().getBody());
-
+				if(bodiesCollide(descrptionA, descrptionB,BORDER, BALL)){
+					float lenA = bodyA.getLinearVelocity().len();
+					float lenB = bodyB.getLinearVelocity().len();
+//					System.out.println("len a: "+lenA+", len b: "+lenB);
+					if(lenA>MIN_SOUND_SPEED || lenB>MIN_SOUND_SPEED){
+						basketBallSound.play();
+					}
 
 				}
+
+
+
+
 
 
 			}
@@ -154,6 +176,17 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 			}
 		});
+	}
+
+	private boolean bodiesCollide(BodyDescription descA, BodyDescription descB, String label1, String label2){
+		if(descA.getLabel().equals(label1) && descB.getLabel().equals(label2)){
+			return true;
+		}
+		if(descA.getLabel().equals(label2) && descB.getLabel().equals(label1)){
+			return true;
+		}
+		return false;
+
 	}
 
 	private void addHit(Body body) {
@@ -237,12 +270,13 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		BodyDef groundBodyDef = new BodyDef();
 		groundBodyDef.position.set(x,y);
 
-		Body groundBody = world.createBody(groundBodyDef);
+		Body borderBody = world.createBody(groundBodyDef);
+		borderBody.setUserData(new BodyDescription(UUID.randomUUID().toString(),BORDER));
 
 		PolygonShape groundBox = new PolygonShape();
 		groundBox.setAsBox(width, height);
 
-		groundBody.createFixture(groundBox,0);
+		borderBody.createFixture(groundBox,0);
 
 		groundBox.dispose();
 	}
@@ -257,7 +291,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		for(int j=0; j<NUM_OF_BALL_ROWS+3; j++) {
 			for (int i = (int) circleDistance; i < width/2f; i += circleDistance) {
 				Body circleBody = createCircleBody(i, (j+1)*verticalStep, BodyDef.BodyType.DynamicBody, radius);
-				Ball ball = new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), basketCenterX, basketCenterY, particles, score);
+				Ball ball = new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), basketCenterX, basketCenterY, particles, basketBallSound);
 
 				balls.add(ball);
 				particles.addActor(ball);
@@ -265,7 +299,11 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 //				ball.setUserObject();
 
 				circleBody.setUserData(new BodyDescription(ball.getId(), BALL));
+
+//				break;
 			}
+
+//			break;
 		}
 
 	}
@@ -412,7 +450,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		ballTexture.dispose();
 		basketTexture.getTexture().dispose();
 		explosion.dispose();
-		score.dispose();
+		basketBallSound.dispose();
 		spin.dispose();
 
 	}
