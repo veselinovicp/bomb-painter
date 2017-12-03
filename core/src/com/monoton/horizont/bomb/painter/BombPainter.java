@@ -117,7 +117,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private void createSoundEffects() {
 		explosion = Gdx.audio.newSound(Gdx.files.internal("DeathFlash.ogg"));//basket_ball_drop.wav
 		basketBallSound = Gdx.audio.newSound(Gdx.files.internal("basket_ball_drop.wav"));//basket_ball_drop.wav
-		spin = Gdx.audio.newSound(Gdx.files.internal("spin.mp3"));//coin_spin.wav
+		spin = Gdx.audio.newSound(Gdx.files.internal("money_spin.wav"));//coin_spin.wav
 	}
 
 	private void createBasketListener() {

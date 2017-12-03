@@ -17,7 +17,7 @@ public class BallInBasket extends Actor{
     private TextureRegion ballTexture;
 
     private float stateTime = 0f;
-    private float animationTime = 1f;
+    private float animationTime = 2.197f;
     private float angle;
     private float dimension;
     private Sound score;
