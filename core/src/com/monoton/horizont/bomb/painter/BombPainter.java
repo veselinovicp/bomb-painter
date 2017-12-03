@@ -221,14 +221,16 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
 	private void createBasket(){
-		basketCenterX = 0.75f * width;
-		basketCenterY = 0.67f * height;
+		basketCenterX = 0.505f * width;
+		basketCenterY = 0.75f * height;
 		int size = 3;
 		basketBody = createCircleBody(basketCenterX, basketCenterY, BodyDef.BodyType.StaticBody, size *radius);
 		basketBody.setUserData(new BodyDescription(UUID.randomUUID().toString(),"basket"));
 
 		basketTexture = new TextureRegion(new Texture(Gdx.files.internal("color_circle.png")));//"basket.png"
-		particles.addActor(new Basket(basketTexture,2*(size+2)*radius,basketCenterX,basketCenterY,stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
+
+
+//		particles.addActor(new Basket(basketTexture,2*(size+2)*radius,basketCenterX,basketCenterY,stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 
 
 	}
@@ -411,7 +413,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		clearHitsFromBoard();
 
 
-//		renderer.render(world, camera.combined);
+		renderer.render(world, camera.combined);
 		world.step(1/60f, 6, 2);
 //		logger.log();
 
