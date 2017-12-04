@@ -26,7 +26,7 @@ public class BallLeaveBasket extends Actor {
         this.dimension = dimension;
 
         // Initialize the Animation with the frame interval and array of frames
-        animation = new Animation<TextureRegion>(0.015f, animationImages);
+        animation = new Animation<TextureRegion>(0.040f, animationImages);
 
         this.setBounds(0, 0, screenWidth, screenHeight);
     }

@@ -246,8 +246,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
 	private void createBallLeaveBasketAnimation() {
-		ballLeaveBasketTexture = new Texture(Gdx.files.internal("coin_spin.png"));
-		ballLeaveBasketImages = createExplosionImages(ballLeaveBasketTexture,14,1);
+		ballLeaveBasketTexture = new Texture(Gdx.files.internal("coin_spin_4.png"));
+		ballLeaveBasketImages = createExplosionImages(ballLeaveBasketTexture,5,1);
 	}
 
 	private void createExplosionAnimation() {
