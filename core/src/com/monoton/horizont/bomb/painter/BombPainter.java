@@ -20,7 +20,6 @@ import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.monoton.horizont.bomb.painter.communication.ExplosionCallback;
 import com.monoton.horizont.bomb.painter.entities.Ball;
-import com.monoton.horizont.bomb.painter.entities.Basket;
 import com.monoton.horizont.bomb.painter.entities.Court;
 import com.monoton.horizont.bomb.painter.entities.Explosion;
 import com.monoton.horizont.bomb.painter.logic.BodyDescription;
@@ -45,8 +44,10 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private Stage particles;
 
 	private Texture explosionTexture;
+	private Texture ballLeaveBasketTexture;
 
 	private TextureRegion[] explosionImages;
+	private TextureRegion[] ballLeaveBasketImages;
 
 	private Texture ballTexture;
 
@@ -93,6 +94,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		//
 		createSoundEffects();
 
+		createAnimationImages();
+
 		createCourt();
 
 
@@ -105,7 +108,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		createBorders();
 
 
-		createExplosionImages();
+
 
 		createBasketListener();
 
@@ -235,26 +238,44 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 	}
 
-	private void createExplosionImages() {
-		int FRAME_COLS=8,FRAME_ROWS = 8;
+	private void createAnimationImages(){
+
+		createExplosionAnimation();
+		createBallLeaveBasketAnimation();
+
+	}
+
+	private void createBallLeaveBasketAnimation() {
+		ballLeaveBasketTexture = new Texture(Gdx.files.internal("coin_spin.png"));
+		ballLeaveBasketImages = createExplosionImages(ballLeaveBasketTexture,14,1);
+	}
+
+	private void createExplosionAnimation() {
 		explosionTexture = new Texture(Gdx.files.internal("explosion.png"));
+		explosionImages = createExplosionImages(explosionTexture,8,8);
+	}
+
+	private TextureRegion[] createExplosionImages(Texture texture, int frameCols, int frameRows) {
+//		int FRAME_COLS=8,FRAME_ROWS = 8;
+
 
 		// Use the split utility method to create a 2D array of TextureRegions. This is
 		// possible because this sprite sheet contains frames of equal size and they are
 		// all aligned.
-		TextureRegion[][] tmp = TextureRegion.split(explosionTexture,
-				explosionTexture.getWidth() / FRAME_COLS,
-				explosionTexture.getHeight() / FRAME_ROWS);
+		TextureRegion[][] tmp = TextureRegion.split(texture,
+				texture.getWidth() / frameCols,
+				texture.getHeight() / frameRows);
 
 		// Place the regions into a 1D array in the correct order, starting from the top
 		// left, going across first. The Animation constructor requires a 1D array.
-		explosionImages = new TextureRegion[FRAME_COLS * FRAME_ROWS];
+		TextureRegion[] animImages = new TextureRegion[frameCols * frameRows];
 		int index = 0;
-		for (int i = 0; i < FRAME_ROWS; i++) {
-			for (int j = 0; j < FRAME_COLS; j++) {
-				explosionImages[index++] = tmp[i][j];
+		for (int i = 0; i < frameRows; i++) {
+			for (int j = 0; j < frameCols; j++) {
+				animImages[index++] = tmp[i][j];
 			}
 		}
+		return animImages;
 	}
 
 	private void createBorders() {
@@ -304,7 +325,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		for(int j=0; j<NUM_OF_BALL_ROWS+3; j++) {
 			for (int i = (int) circleDistance; i < width/2f; i += circleDistance) {
 				Body circleBody = createCircleBody(i, (j+1)*verticalStep, BodyDef.BodyType.DynamicBody, radius);
-				Ball ball = new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), basketCenterX, basketCenterY, particles, basketBallSound);
+				Ball ball = new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), basketCenterX, basketCenterY, particles, basketBallSound, ballLeaveBasketImages);
 
 				balls.add(ball);
 				particles.addActor(ball);
@@ -413,7 +434,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		clearHitsFromBoard();
 
 
-		renderer.render(world, camera.combined);
+//		renderer.render(world, camera.combined);
 		world.step(1/60f, 6, 2);
 //		logger.log();
 
@@ -466,6 +487,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		basketBallSound.dispose();
 		spin.dispose();
 		court.dispose();
+		ballLeaveBasketTexture.dispose();
 
 	}
 

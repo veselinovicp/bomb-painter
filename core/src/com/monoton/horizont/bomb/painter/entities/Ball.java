@@ -24,7 +24,9 @@ public class Ball extends Actor{
     private Stage particles;
     private Sound score;
 
-    public Ball(Body ballBody, TextureRegion ballTexture, float dimension, float screenWidth, float screenHeight, float basketCenterX, float basketCenterY, Stage particles, Sound score) {
+    private TextureRegion[] animationImages;
+
+    public Ball(Body ballBody, TextureRegion ballTexture, float dimension, float screenWidth, float screenHeight, float basketCenterX, float basketCenterY, Stage particles, Sound score, TextureRegion[] animationImages) {
         this.ballBody = ballBody;
         this.ballTexture = ballTexture;
         this.dimension=dimension;
@@ -38,6 +40,7 @@ public class Ball extends Actor{
         this.screenHeight=screenHeight;
         this.particles =particles;
         this.score = score;
+        this.animationImages = animationImages;
     }
 
 
@@ -67,7 +70,7 @@ public class Ball extends Actor{
         BodyDescription userData = (BodyDescription) ballBody.getUserData();
         float linearVelocityAngleBeforeColision = userData.getLinearVelocityAngleBeforeColision();
 
-        BallInBasket ballInBasket = new BallInBasket(ballTexture, position.x, position.y, basketCenterX, basketCenterY, angle, screenWidth, screenHeight, dimension, linearVelocityAngleBeforeColision, score);//ballBody.getAngle()
+        BallInBasket ballInBasket = new BallInBasket(ballTexture, position.x, position.y, basketCenterX, basketCenterY, angle, screenWidth, screenHeight, dimension, linearVelocityAngleBeforeColision, score, animationImages, particles);//ballBody.getAngle()
         particles.addActor(ballInBasket);
         return super.remove();
     }
