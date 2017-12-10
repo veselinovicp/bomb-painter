@@ -264,8 +264,8 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	}
 
 	private void createExplosionParticleAnimation() {
-		explosionParticleTexture = new Texture(Gdx.files.internal("flame_3.png"));
-		explosionParticleImages = createAnimationImages(explosionParticleTexture,8,8);
+		explosionParticleTexture = new Texture(Gdx.files.internal("flame_4.png"));
+		explosionParticleImages = createAnimationImages(explosionParticleTexture,8,4);
 	}
 
 	private TextureRegion[] createAnimationImages(Texture texture, int frameCols, int frameRows) {

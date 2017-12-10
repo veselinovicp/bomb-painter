@@ -24,7 +24,7 @@ public class Explosion extends Actor {
     private Animation animation;
     private float eplosionWidth=32;
     private float explostionHeight=32;
-    private float eplosionParticleWidth=eplosionWidth/5f;
+    private float eplosionParticleWidth=eplosionWidth/3f;
     private float explostionParticleHeight=explostionHeight/10f;
 
     private Animation particleAnimation;
@@ -39,14 +39,15 @@ public class Explosion extends Actor {
 
         // Initialize the Animation with the frame interval and array of frames
         animation = new Animation<TextureRegion>(FRAME_TIME, explosionImages);
+        this.totalTime = explosionImages.length*FRAME_TIME;
 
-        particleAnimation = new Animation<TextureRegion>(FRAME_TIME, explosionParticleImages);
+        particleAnimation = new Animation<TextureRegion>(totalTime/explosionParticleImages.length, explosionParticleImages);
 
         this.positionX=positionX;
         this.positionY=positionY;
 
         this.setBounds(0, 0, screenWidth, screenHeight);
-        this.totalTime = explosionImages.length*FRAME_TIME;
+
     }
 
     @Override
