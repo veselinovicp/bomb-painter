@@ -7,6 +7,7 @@ public class BodyDescription {
     private float linearVelocityAngleBeforeColision;
 
 
+
     public BodyDescription(String id, String label) {
         this.id = id;
         this.label = label;
@@ -27,4 +28,5 @@ public class BodyDescription {
     public void setLinearVelocityAngleBeforeColision(float linearVelocityAngleBeforeColision) {
         this.linearVelocityAngleBeforeColision = linearVelocityAngleBeforeColision;
     }
+
 }
