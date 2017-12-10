@@ -46,6 +46,9 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 	private Texture explosionTexture;
 	private Texture ballLeaveBasketTexture;
 
+	private Texture explosionParticleTexture;
+	private TextureRegion[] explosionParticleImages;
+
 	private TextureRegion[] explosionImages;
 	private TextureRegion[] ballLeaveBasketImages;
 
@@ -242,20 +245,26 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 
 		createExplosionAnimation();
 		createBallLeaveBasketAnimation();
+		createExplosionParticleAnimation();
 
 	}
 
 	private void createBallLeaveBasketAnimation() {
 		ballLeaveBasketTexture = new Texture(Gdx.files.internal("coin_spin_4.png"));
-		ballLeaveBasketImages = createExplosionImages(ballLeaveBasketTexture,5,1);
+		ballLeaveBasketImages = createAnimationImages(ballLeaveBasketTexture,5,1);
 	}
 
 	private void createExplosionAnimation() {
 		explosionTexture = new Texture(Gdx.files.internal("explosion.png"));
-		explosionImages = createExplosionImages(explosionTexture,8,8);
+		explosionImages = createAnimationImages(explosionTexture,8,8);
 	}
 
-	private TextureRegion[] createExplosionImages(Texture texture, int frameCols, int frameRows) {
+	private void createExplosionParticleAnimation() {
+		explosionParticleTexture = new Texture(Gdx.files.internal("flame_3.png"));
+		explosionParticleImages = createAnimationImages(explosionParticleTexture,8,8);
+	}
+
+	private TextureRegion[] createAnimationImages(Texture texture, int frameCols, int frameRows) {
 //		int FRAME_COLS=8,FRAME_ROWS = 8;
 
 
@@ -386,7 +395,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		}
 		explosion.play();
 
-		particles.addActor(new Explosion(explosionsParticles, this, explosionImages, x, y, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
+		particles.addActor(new Explosion(explosionsParticles, this, explosionImages, x, y, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), explosionParticleImages));
 
 
 
@@ -488,6 +497,7 @@ public class BombPainter extends ApplicationAdapter implements InputProcessor, E
 		spin.dispose();
 		court.dispose();
 		ballLeaveBasketTexture.dispose();
+		explosionParticleTexture.dispose();
 
 	}
 
