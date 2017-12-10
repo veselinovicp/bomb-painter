@@ -17,6 +17,8 @@ public class BallLeaveBasket extends Actor {
 
     private float stateTime = 0f;
 
+    private static final int NUM_OF_ANIMATIONS=4;
+
     public BallLeaveBasket(TextureRegion[] animationImages, float positionX, float positionY, float screenWidth, float screenHeight, float dimension) {
         this.animationImages = animationImages;
         this.positionX = positionX;
@@ -26,7 +28,8 @@ public class BallLeaveBasket extends Actor {
         this.dimension = dimension;
 
         // Initialize the Animation with the frame interval and array of frames
-        animation = new Animation<TextureRegion>(0.040f, animationImages);
+        animation = new Animation<TextureRegion>(0.020f, animationImages);
+        animation.setPlayMode(Animation.PlayMode.LOOP);
 
         this.setBounds(0, 0, screenWidth, screenHeight);
     }
@@ -39,7 +42,7 @@ public class BallLeaveBasket extends Actor {
 
 
 
-        if(!animation.isAnimationFinished(stateTime)){
+        if(!animation.isAnimationFinished(stateTime/NUM_OF_ANIMATIONS)){
 
 
 
