@@ -28,8 +28,9 @@ public class BallInBasket extends Actor{
 
     private float screenWidth, screenHeight;
     private Stage stage;
+    private float angularVelocity;
 
-    public BallInBasket(TextureRegion ballTexture, float pointX, float pointY, float basketCenterX, float basketCenterY, float angle, float screenWidth, float screenHeight, float dimension, float linearVelocityAngleBeforeColision, Sound score, TextureRegion[] animationImages, Stage stage) {
+    public BallInBasket(TextureRegion ballTexture, float pointX, float pointY, float basketCenterX, float basketCenterY, float angle, float screenWidth, float screenHeight, float dimension, float linearVelocityAngleBeforeColision, Sound score, TextureRegion[] animationImages, Stage stage, float angularVelocity) {
         this.ballTexture = ballTexture;
         this.setBounds(0, 0, screenWidth, screenHeight);
         this.inBasketMovement = BallInBasketMovementFactory.getMovement(Constants.IN_BASKET_MOVEMENT_TANGENT_SPIRAL,pointX,pointY,basketCenterX, basketCenterY,angle, linearVelocityAngleBeforeColision);
@@ -40,6 +41,9 @@ public class BallInBasket extends Actor{
         this.screenHeight=screenHeight;
         this.screenWidth =screenWidth;
 
+
+        this.angularVelocity=angularVelocity;
+//        System.out.println("angularVelocity: "+angularVelocity);
         this.stage=stage;
 
 
@@ -61,6 +65,9 @@ public class BallInBasket extends Actor{
             Vector2 cartesianPoint = inBasketMovement.getCartesianPoint(ratio);//ratio*2*MathUtils.PI
             float currentDimension = (1-ratio/4f)*dimension;
 
+
+//            float newAngle=
+            calculateAngle();
             batch.draw(ballTexture, cartesianPoint.x - currentDimension / 2, cartesianPoint.y - currentDimension / 2, currentDimension / 2, currentDimension / 2, currentDimension, currentDimension, 1, 1, this.angle);
             lastCartesianPoint=cartesianPoint;
             lastDimension = currentDimension;
@@ -72,6 +79,10 @@ public class BallInBasket extends Actor{
             remove();
         }
 
+    }
+
+    private void calculateAngle(){
+        angle= angle+angularVelocity*stateTime;
     }
 
 

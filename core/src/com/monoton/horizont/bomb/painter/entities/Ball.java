@@ -65,12 +65,13 @@ public class Ball extends Actor{
         Vector2 position = ballBody.getPosition();
         float angle = ballBody.getLinearVelocity().angleRad();
 
+        float angularVelocity = ballBody.getAngularVelocity();
 
 
         BodyDescription userData = (BodyDescription) ballBody.getUserData();
         float linearVelocityAngleBeforeColision = userData.getLinearVelocityAngleBeforeColision();
 
-        BallInBasket ballInBasket = new BallInBasket(ballTexture, position.x, position.y, basketCenterX, basketCenterY, angle, screenWidth, screenHeight, dimension, linearVelocityAngleBeforeColision, score, animationImages, particles);//ballBody.getAngle()
+        BallInBasket ballInBasket = new BallInBasket(ballTexture, position.x, position.y, basketCenterX, basketCenterY, angle, screenWidth, screenHeight, dimension, linearVelocityAngleBeforeColision, score, animationImages, particles, angularVelocity);//ballBody.getAngle()
         particles.addActor(ballInBasket);
         return super.remove();
     }

@@ -63,16 +63,16 @@ public class TangentSpiral implements BallInBasketMovement {
 
 
 
-        System.out.println("a: "+a+", b: "+b);
+//        System.out.println("a: "+a+", b: "+b);
         float fiDeg = fi * MathUtils.radiansToDegrees;
         float velDeg = linearVelocityAngleBeforeColision * MathUtils.radiansToDegrees;
 
-        System.out.println("pointX: "+pointX+", pointY: "+pointY);
-        System.out.println("angle: "+fiDeg+", tangent: "+velDeg);
+     /*   System.out.println("pointX: "+pointX+", pointY: "+pointY);
+        System.out.println("angle: "+fiDeg+", tangent: "+velDeg);*/
 
         if(isLinear()){
             calculateLinearFunction();
-            System.out.println("linear function");
+//            System.out.println("linear function");
         }
 
 
