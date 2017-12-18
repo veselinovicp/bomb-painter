@@ -15,6 +15,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -31,6 +35,7 @@ import java.util.UUID;
 public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
 
     private static final String BORDER = "BORDER";
+    private static final String BALL="ball";
     private final UIBuilder uiBuilder;
     private OrthographicCamera camera;
     private FPSLogger logger;
@@ -45,7 +50,7 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
 
     private StretchViewport stretchViewport;
 
-    private Stage particles;
+    private Stage stage;
 
     private Texture explosionTexture;
     private Texture ballLeaveBasketTexture;
@@ -66,7 +71,7 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
 
     private SnapshotArray<Body> hits = new SnapshotArray<Body>();
 
-    private static final String BALL="ball";
+
 
 
     private float basketCenterX;
@@ -77,6 +82,9 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
     private Sound spin;
 
     private Texture court;
+
+    private Table scoreBoard;
+    private Label scoreLabel;
 
     public GameScreen(UIBuilder uiBuilder){
         this.uiBuilder =uiBuilder;
@@ -96,13 +104,15 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
         camera.update();
 
         stretchViewport = new StretchViewport(width, height);
-        particles = new Stage(stretchViewport);
+        stage = new Stage(stretchViewport);
 
         world = new World(new Vector2(0, -9.8f), false);
         renderer = new Box2DDebugRenderer();
         logger = new FPSLogger();
 
         //
+
+
         createSoundEffects();
 
         createAnimationImages();
@@ -118,6 +128,8 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
 
         createBorders();
 
+        createScoreBoard();
+
 
 
 
@@ -130,11 +142,34 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
 
     }
 
+    private void createScoreBoard() {
+        scoreBoard = new Table();
+        scoreBoard.setWidth(width);
+        scoreBoard.setHeight(height);
+        scoreBoard.align(Align.top|Align.left);
+//        scoreBoard.padTop(20);
+
+
+        createScoreText();
+
+
+
+        stage.addActor(scoreBoard);
+
+
+    }
+
+    private void createScoreText(){
+        Skin skin = uiBuilder.get(UIBuilder.DEFAULT_SKIN, Skin.class);
+        scoreLabel = new Label("0", skin);
+        scoreBoard.add(scoreLabel).align(Align.left).padRight(0);
+    }
+
     private void createCourt() {
         court = uiBuilder.get(UIBuilder.COURT, Texture.class);
 
 
-        particles.addActor(new Court(court, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
+        stage.addActor(new Court(court, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 
     }
 
@@ -220,6 +255,7 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
 
         if(userData!=null && label.equals(BALL)) {
             System.out.println("hit");
+            increaseScore();
             spin.play();
             hits.begin();
             hits.add(body);
@@ -233,6 +269,12 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
 
     }
 
+    private void increaseScore(){
+        Integer currentScore = Integer.valueOf(scoreLabel.getText().toString());
+        int newScore = currentScore+100;
+        scoreLabel.setText(""+newScore);
+    }
+
     private void createBasket(){
         basketCenterX = 0.505f * width;
         basketCenterY = 0.75f * height;
@@ -243,7 +285,7 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
 
 
 
-//		particles.addActor(new Basket(basketTexture,2*(size+2)*radius,basketCenterX,basketCenterY,stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
+//		stage.addActor(new Basket(basketTexture,2*(size+2)*radius,basketCenterX,basketCenterY,stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight()));
 
 
     }
@@ -346,10 +388,10 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
         for(int j=0; j<NUM_OF_BALL_ROWS+3; j++) {
             for (int i = (int) circleDistance; i < width/2f; i += circleDistance) {
                 Body circleBody = createCircleBody(i, (j+1)*verticalStep, BodyDef.BodyType.DynamicBody, radius);
-                Ball ball = new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), basketCenterX, basketCenterY, particles, basketBallSound, ballLeaveBasketImages);
+                Ball ball = new Ball(circleBody, new TextureRegion(ballTexture), radius * 2, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), basketCenterX, basketCenterY, stage, basketBallSound, ballLeaveBasketImages);
 
                 balls.add(ball);
-                particles.addActor(ball);
+                stage.addActor(ball);
 
 //				ball.setUserObject();
 
@@ -394,10 +436,10 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
 
             FixtureDef fixtureDef = new FixtureDef();
             fixtureDef.shape =circleShape;
-            fixtureDef.density = 60 / (float) numRays; // very high - shared across all particles
+            fixtureDef.density = 60 / (float) numRays; // very high - shared across all stage
             fixtureDef.friction = 0; // friction not necessary
             fixtureDef.restitution = 0.99f; // high restitution to reflect off obstacles
-            fixtureDef.filter.groupIndex = -1; // particles should not collide with each other
+            fixtureDef.filter.groupIndex = -1; // stage should not collide with each other
 
             body.createFixture(fixtureDef);
 
@@ -407,7 +449,7 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
         }
         explosion.play();
 
-        particles.addActor(new Explosion(explosionsParticles, this, explosionImages, x, y, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), explosionParticleImages));
+        stage.addActor(new Explosion(explosionsParticles, this, explosionImages, x, y, stretchViewport.getScreenWidth(), stretchViewport.getScreenHeight(), explosionParticleImages));
 
 
 
@@ -448,10 +490,10 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
 
         /**
 
-         * 1. draw particles
+         * 1. draw stage
          */
-        particles.act();
-        particles.draw();
+        stage.act();
+        stage.draw();
 
         clearHitsFromBoard();
 
@@ -485,7 +527,7 @@ public class GameScreen implements Screen , InputProcessor, ExplosionCallback {
 
     private void removeBall(String id){
 
-        for(Actor actor : particles.getActors())
+        for(Actor actor : stage.getActors())
         {
 
 
